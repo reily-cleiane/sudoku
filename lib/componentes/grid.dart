@@ -72,7 +72,7 @@ class Grid extends StatelessWidget{
           decoration: BoxDecoration(
             //border: Border.all(width: 2), 
             image: DecorationImage(
-            image: AssetImage("imagens/imagemgrid.png"),
+            image: AssetImage("imagens/grid.png"),
             fit: BoxFit.cover,
             ),),
           child: GridView.count(

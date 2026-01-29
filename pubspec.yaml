@@ -60,6 +60,18 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - imagens/imagemgrid.png
+    - imagens/grid.png
+    - imagens/bg.jpg
+    - imagens/teclado/btn1.png
+    - imagens/teclado/btn2.png
+    - imagens/teclado/btn3.png
+    - imagens/teclado/btn4.png
+    - imagens/teclado/btn5.png
+    - imagens/teclado/btn6.png
+    - imagens/teclado/btn7.png
+    - imagens/teclado/btn8.png
+    - imagens/teclado/btn9.png
+
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

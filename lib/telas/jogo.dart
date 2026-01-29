@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:developer';
 import 'package:sudoku_app/componentes/grid.dart';
+import 'package:sudoku_app/componentes/teclado.dart';
 import 'package:sudoku_app/modelos/celula.model.dart';
 
 class Jogo extends StatefulWidget{
@@ -36,57 +37,49 @@ class _JogoState extends State<Jogo> {
   }
 
   @override
-   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Sudoku"),
-        centerTitle: true,
-        backgroundColor: Colors.purple,
-      ), 
-      backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(
-              width: double.infinity,
-              child:  Padding(padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-              child: AspectRatio(aspectRatio: 1.0,
-              child: Grid(valores:_gerarGridMockado(), celulaClicada: (valor) => _celulaClicada(valor)),
-              ) ),
-            ),
-          
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: List.generate(9, (index) {
-            return Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0), // Espaçamento entre botões
-                child: AspectRatio(
-                  aspectRatio: 1, // Mantém o botão quadrado
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      backgroundColor: Colors.purple.shade50,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    onPressed: () => log("Número selecionado: ${index + 1}"),
-                    child: Text(
-                      '${index + 1}',
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+  Widget build(BuildContext context) {
+    return Stack( 
+      children: [
+
+        Positioned.fill( 
+          child: Image.asset(
+            "imagens/bg.jpg", 
+            fit: BoxFit.cover,
+          ),
+        ),
+        Scaffold(
+          backgroundColor: Colors.transparent, 
+          appBar: AppBar(
+            title: const Text("Sudoku"),
+            centerTitle: true,
+            backgroundColor: Colors.purple, 
+          ),
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: AspectRatio(
+                      aspectRatio: 1.0,
+                      child: Grid(
+                        valores: _gerarGridMockado(),
+                        celulaClicada: (valor) => _celulaClicada(valor),
                       ),
                     ),
                   ),
-                )));
-          
-          }))]))
-            
-        );
-      
-   }
+                ),
+                Teclado(
+                  valoresDisponiveis: const [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                  botaoClicado: (valor) => _celulaClicada(valor),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
 }
