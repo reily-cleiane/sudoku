@@ -1,13 +1,11 @@
 class Celula {
   int? valor;
-  bool eFixo; // Números que já vêm no desafio
-  bool eErrado;
+  bool isFixo; // Números que já vêm no desafio
   List<int> rascunho; // Para as "anotações" de cantinho
 
   Celula({
     this.valor,
-    this.eFixo = false,
-    this.eErrado = false,
-    this.rascunho = const [],
+    this.isFixo = false,
+    this.rascunho = const[],
   });
 }

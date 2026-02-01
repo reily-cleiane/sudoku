@@ -2,34 +2,27 @@ import 'package:flutter/material.dart';
 import 'dart:developer';
 import 'package:sudoku_app/componentes/grid.dart';
 import 'package:sudoku_app/componentes/teclado.dart';
+import 'package:sudoku_app/logica/dificuldade.dart';
+import 'package:sudoku_app/logica/logica.dart';
 import 'package:sudoku_app/modelos/celula.model.dart';
 
 class Jogo extends StatefulWidget{
-  const Jogo({super.key, required this.title});
-  final String title;
+  //Recebe key (que é padrão do framework, título, e dificuldade do jogo)
+  const Jogo({super.key, required this.titulo, required this.dificuldade});
+  final String titulo;
+  final Dificuldade dificuldade;
   
-
   @override
-  _JogoState createState() => _JogoState();
+  JogoState createState() => JogoState();
     
 }
-class _JogoState extends State<Jogo> {
+class JogoState extends State<Jogo> {
+  List<List<Celula>> tabuleiro = [];
 
-  List<Celula> _gerarGridMockado(){
-
-    List<Celula> lista = List.generate(81, (index) =>Celula());
-
-    for(int i = 0; i < 81; i++){
-      if(i % 5 == 0){
-        lista[i].valor = 5;
-        lista[i].eFixo = true;
-      }
-      else if(i % 8 == 0){
-        lista[i].valor = 8;
-      }
-    }
-    return lista;
-
+  @override
+  void initState() {
+    super.initState();
+    tabuleiro = LogicaSudoku.gerarTabuleiro(widget.dificuldade);
   }
 
   void _celulaClicada(int valor){
@@ -64,7 +57,7 @@ class _JogoState extends State<Jogo> {
                     child: AspectRatio(
                       aspectRatio: 1.0,
                       child: Grid(
-                        valores: _gerarGridMockado(),
+                        tabuleiro: tabuleiro,
                         celulaClicada: (valor) => _celulaClicada(valor),
                       ),
                     ),

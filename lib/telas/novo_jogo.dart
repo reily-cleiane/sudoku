@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sudoku_app/componentes/grid.dart';
+import 'package:sudoku_app/logica/dificuldade.dart';
 import 'package:sudoku_app/telas/jogo.dart';
 import 'dart:developer';
 
@@ -14,13 +15,13 @@ class NovoJogo extends StatefulWidget {
 
 class _NovoJogoState extends State<NovoJogo> {
 
-   void iniciarJogo(){
+   void iniciarJogo(Dificuldade dificuldade){
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           //builder: (context) => Grid())
           builder: (context) => Jogo(
-            title: 'Jogo')),
+            titulo: 'Jogo', dificuldade: dificuldade,)),
       );
    }
 
@@ -44,7 +45,7 @@ class _NovoJogoState extends State<NovoJogo> {
                   padding: EdgeInsets.zero,
                   minimumSize: Size.zero,),
                 onPressed: () {
-                  iniciarJogo();
+                  iniciarJogo(DificuldadeFacil());
                 },
                 child: const Text('Fácil', style: TextStyle(color: Colors.black, fontSize: 20.0),)
               )
@@ -62,7 +63,7 @@ class _NovoJogoState extends State<NovoJogo> {
                   padding: EdgeInsets.zero,
                   minimumSize: Size.zero,),
                 onPressed: () {
-                  iniciarJogo();
+                  iniciarJogo(DificuldadeMedia());
                 },
                 child: const Text('Médio', style: TextStyle(color: Colors.black, fontSize: 20.0),)
               ),
@@ -81,7 +82,7 @@ class _NovoJogoState extends State<NovoJogo> {
                   padding: EdgeInsets.zero,
                   minimumSize: Size.zero,),
                 onPressed: () {
-                  iniciarJogo();
+                  iniciarJogo(DificuldadeDificil());
                 },
                 child: const Text('Difícil', style: TextStyle(color: Colors.black, fontSize: 20.0),)
               )

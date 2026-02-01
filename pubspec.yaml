@@ -71,6 +71,27 @@ flutter:
     - imagens/teclado/btn7.png
     - imagens/teclado/btn8.png
     - imagens/teclado/btn9.png
+    - imagens/imgs_celulas/1.png
+    - imagens/imgs_celulas/2.png
+    - imagens/imgs_celulas/3.png
+    - imagens/imgs_celulas/4.png
+    - imagens/imgs_celulas/5.png
+    - imagens/imgs_celulas/6.png
+    - imagens/imgs_celulas/7.png
+    - imagens/imgs_celulas/8.png
+    - imagens/imgs_celulas/9.png
+    - imagens/imgs_celulas/1a.png
+    - imagens/imgs_celulas/2a.png
+    - imagens/imgs_celulas/3a.png
+    - imagens/imgs_celulas/4a.png
+    - imagens/imgs_celulas/5a.png
+    - imagens/imgs_celulas/6a.png
+    - imagens/imgs_celulas/7a.png
+    - imagens/imgs_celulas/8a.png
+    - imagens/imgs_celulas/9a.png
+
+
+
 
   #   - images/a_dot_ham.jpeg
 
