@@ -2,18 +2,19 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:sudoku_app/modelos/celula.model.dart';
 
+/**
+ * Classe responsável por gerar o conteúdo formatado de uma célula do grid
+ */
 class CelulaGrid extends StatelessWidget {
   const CelulaGrid({super.key, required this.celula});
 
   final Celula celula;
 
+  // Recupera a imagem correta a ser exibida na célula, de acordo com o valor desejado
   Padding _recuperarNumero(Celula celula, [bool fixo = false]) {
-    String nome = fixo ? "${celula.valor}.png" : "${celula.valor}a.png)";
+    String nome = fixo ? "${celula.valor}.png" : "${celula.valor}a.png";
     String caminho = "imagens/imgs_celulas/$nome";
-    return Padding(
-      padding: EdgeInsetsGeometry.all(10),
-      child: Image.asset(caminho),
-    );
+    return Padding(padding: EdgeInsetsGeometry.all(10), child: Image.asset(caminho));
   }
 
   Wrap _gerarCelulaRascunho(Celula celula) {
@@ -44,23 +45,12 @@ class CelulaGrid extends StatelessWidget {
 
   Center _gerarCelulaPreenchida(Celula celula) {
     return Center(child: _recuperarNumero(celula, false));
-    // return Center(
-    //   child: Text(
-    //     celula.valor?.toString() ?? '',
-    //     style: TextStyle(
-    //       fontSize: 20,
-    //       fontWeight: FontWeight.bold,
-    //       color: const Color.fromARGB(255, 50, 114, 211),
-    //     ),
-    //   ),
-    // );
   }
 
   Widget _gerarCelula(Celula celula) {
     if (celula.isFixo) {
       return _gerarCelulaFixa(celula);
-    } else if ((celula.valor == 0 || celula.valor == null) &&
-        celula.rascunho.isNotEmpty) {
+    } else if ((celula.valor == 0 || celula.valor == null) && celula.rascunho.isNotEmpty) {
       return _gerarCelulaRascunho(celula);
     } else if (celula.valor == 0 || celula.valor == null) {
       return Text('');

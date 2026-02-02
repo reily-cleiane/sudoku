@@ -1,8 +1,8 @@
 import 'dart:math';
 import 'dart:developer' as d;
-import 'package:flutter/widgets.dart';
 import 'package:sudoku_app/logica/dificuldade.dart';
 import 'package:sudoku_app/modelos/celula.model.dart';
+import 'package:sudoku_app/modelos/jogada_invalida.model.dart';
 
 /// Classe responsável pela geração e manipulação de tabuleiros Sudoku
 
@@ -12,7 +12,7 @@ class LogicaSudoku {
 
   /// Verifica se o número está presente no bloco 3x3
   /// começando na posição (linhaInicio, colunaInicio)
-  static bool blocoContemNumero(
+  static (bool, JogadaInvalida?) blocoContemNumero(
     List<List<Celula>> tabuleiro,
     int linhaInicio,
     int colunaInicio,
@@ -21,60 +21,56 @@ class LogicaSudoku {
     for (int i = 0; i < tamanhoBloco; i++) {
       for (int j = 0; j < tamanhoBloco; j++) {
         if (tabuleiro[linhaInicio + i][colunaInicio + j].valor == num) {
-          return true;
+          return (true, JogadaInvalidaBloco((i, j)));
         }
       }
     }
-    return false;
+    return (false, null);
   }
 
   /// Verifica se o número está presente na linha
-  static bool linhaContemNumero(
-    List<List<Celula>> tabuleiro,
-    int idxLinha,
-    int num,
-  ) {
-    return tabuleiro[idxLinha].map( (celula) => celula.valor).toList().contains(num);
+  static (bool, JogadaInvalida?) linhaContemNumero(List<List<Celula>> tabuleiro, int idxLinha, int num) {
+    for (int j = 0; j < tamanhoBloco; j++) {
+      if (tabuleiro[idxLinha][j].valor == num) {
+        return (true, JogadaInvalidaLinha((idxLinha, j)));
+      }
+    }
+    return (false, null);
   }
 
   /// Verifica se o número está presente na coluna
-  static bool colunaContemNumero(
-    List<List<Celula>> tabuleiro,
-    int idxColuna,
-    int num,
-  ) {
+  static (bool, JogadaInvalida?) colunaContemNumero(List<List<Celula>> tabuleiro, int idxColuna, int num) {
     for (int i = 0; i < tamanho; i++) {
       if (tabuleiro[i][idxColuna].valor == num) {
-        return true;
+        return (true, JogadaInvalidaColuna((i, idxColuna)));
       }
     }
-    return false;
+    return (false, null);
   }
 
   /// Verifica se o número pode ser colocado na posição sem violar regras
-  static bool verificaValidadeNumero(
+  static (bool, JogadaInvalida?) verificaValidadeNumero(
     List<List<Celula>> tabuleiro,
     int idxLinha,
     int idxColuna,
     int num,
   ) {
-    return !linhaContemNumero(tabuleiro, idxLinha, num) &&
-        !colunaContemNumero(tabuleiro, idxColuna, num) &&
-        !blocoContemNumero(
-          tabuleiro,
-          idxLinha - idxLinha % tamanhoBloco,
-          idxColuna - idxColuna % tamanhoBloco,
-          num,
-        );
+    final (repeteNaLinha, jogInvalidaLinha) = linhaContemNumero(tabuleiro, idxLinha, num);
+    final (repeteNaColuna, jogInvalidaColuna) = colunaContemNumero(tabuleiro, idxColuna, num);
+    final (repeteNoBloco, jogInvalidaBloco) = blocoContemNumero(
+      tabuleiro,
+      idxLinha - idxLinha % tamanhoBloco,
+      idxColuna - idxColuna % tamanhoBloco,
+      num,
+    );
+
+    final valido = !repeteNaLinha && !repeteNaColuna && !repeteNoBloco;
+    return (valido, valido ? null : JogadaInvalida([jogInvalidaLinha, jogInvalidaColuna, jogInvalidaBloco]));
   }
 
   /// Preenche um bloco 3x3 com números aleatórios de 1 a 9,
   /// garantindo que cada número apareça apenas uma vez
-  static void preencheBloco(
-    List<List<Celula>> tabuleiro,
-    int linhaInicio,
-    int colunaInicio,
-  ) {
+  static void preencheBloco(List<List<Celula>> tabuleiro, int linhaInicio, int colunaInicio) {
     List<int> numeros = List.generate(9, (i) => i + 1);
     numeros.shuffle();
 
@@ -94,7 +90,6 @@ class LogicaSudoku {
         index++;
       }
     }
-
   }
 
   /// Preenche os blocos 3x3 na diagonal do tabuleiro
@@ -102,22 +97,17 @@ class LogicaSudoku {
     for (int idxInicial = 0; idxInicial < tamanho; idxInicial += tamanhoBloco) {
       preencheBloco(tabuleiro, idxInicial, idxInicial);
 
-        for(int i = 0; i < tabuleiro.length; i++){
-          for(int j = 0; j < tabuleiro.length; j++){
-            var valor = tabuleiro[i][j].valor;
-            d.log('tab $valor');
-
-          }
+      for (int i = 0; i < tabuleiro.length; i++) {
+        for (int j = 0; j < tabuleiro.length; j++) {
+          var valor = tabuleiro[i][j].valor;
+          d.log('tab $valor');
         }
+      }
     }
   }
 
   /// Preenche o restante do tabuleiro usando backtracking
-  static bool preencheRestante(
-    List<List<Celula>> tabuleiro,
-    int idxLinha,
-    int idxColuna,
-  ) {
+  static bool preencheRestante(List<List<Celula>> tabuleiro, int idxLinha, int idxColuna) {
     // Se chegou ao fim do tabuleiro, sucesso
     if (idxLinha == tamanho) {
       return true;
@@ -135,7 +125,8 @@ class LogicaSudoku {
 
     // Tenta preencher com números de 1 a 9
     for (int num = 1; num <= tamanho; num++) {
-      if (verificaValidadeNumero(tabuleiro, idxLinha, idxColuna, num)) {
+      final (numeroValido, jogadaInvalida) = verificaValidadeNumero(tabuleiro, idxLinha, idxColuna, num);
+      if (numeroValido) {
         tabuleiro[idxLinha][idxColuna].valor = num;
 
         if (preencheRestante(tabuleiro, idxLinha, idxColuna + 1)) {
@@ -157,7 +148,8 @@ class LogicaSudoku {
         if (tabuleiro[i][j].valor == 0) {
           int total = 0;
           for (int num = 1; num <= tamanho; num++) {
-            if (verificaValidadeNumero(tabuleiro, i, j, num)) {
+            final (numeroValido, jogadaInvalida) = verificaValidadeNumero(tabuleiro, i, j, num);
+            if (numeroValido) {
               tabuleiro[i][j].valor = num;
               total += contaSolucoes(tabuleiro, limite);
               tabuleiro[i][j].valor = 0;
@@ -199,7 +191,7 @@ class LogicaSudoku {
         continue;
       }
 
-      int backup = tabuleiro[i][j].valor??0;
+      int backup = tabuleiro[i][j].valor ?? 0;
       tabuleiro[i][j].valor = 0;
 
       // Cria cópia para teste
@@ -230,5 +222,20 @@ class LogicaSudoku {
     removeKDigitos(tabuleiro, k);
 
     return tabuleiro;
+  }
+
+  static (bool, JogadaInvalida?) inserirNumero(List<List<Celula>> tabuleiro, int valor, (int, int)? posicao) {
+    if (posicao == null) {
+      return (false, null);
+    }
+
+    var (valido, jogadaInvalida) = verificaValidadeNumero(tabuleiro, posicao.$1, posicao.$2, valor);
+
+    if (valido) {
+      tabuleiro[posicao.$1][posicao.$2] = Celula(isFixo: false, valor: valor, rascunho: []);
+      return (true, null);
+    }
+
+    return (false, jogadaInvalida);
   }
 }
