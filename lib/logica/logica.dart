@@ -30,7 +30,7 @@ class LogicaSudoku {
 
   /// Verifica se o número está presente na linha
   static (bool, JogadaInvalida?) linhaContemNumero(List<List<Celula>> tabuleiro, int idxLinha, int num) {
-    for (int j = 0; j < tamanhoBloco; j++) {
+    for (int j = 0; j < tamanho; j++) {
       if (tabuleiro[idxLinha][j].valor == num) {
         return (true, JogadaInvalidaLinha((idxLinha, j)));
       }
