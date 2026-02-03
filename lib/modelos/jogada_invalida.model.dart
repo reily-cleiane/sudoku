@@ -44,7 +44,7 @@ class JogadaInvalidaColuna extends JogadaInvalida {
 
 class JogadaInvalidaBloco extends JogadaInvalida {
   JogadaInvalidaBloco(Posicao posicao) : super([]) {
-    repeteNaColuna = true;
+    repeteNoBloco = true;
     posicaoDuplicadaNoBloco = posicao;
   }
 }

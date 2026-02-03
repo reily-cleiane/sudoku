@@ -21,7 +21,7 @@ class LogicaSudoku {
     for (int i = 0; i < tamanhoBloco; i++) {
       for (int j = 0; j < tamanhoBloco; j++) {
         if (tabuleiro[linhaInicio + i][colunaInicio + j].valor == num) {
-          return (true, JogadaInvalidaBloco((i, j)));
+          return (true, JogadaInvalidaBloco((linhaInicio + i, colunaInicio + j)));
         }
       }
     }
@@ -65,7 +65,8 @@ class LogicaSudoku {
     );
 
     final valido = !repeteNaLinha && !repeteNaColuna && !repeteNoBloco;
-    return (valido, valido ? null : JogadaInvalida([jogInvalidaLinha, jogInvalidaColuna, jogInvalidaBloco]));
+    final jogInvalida = JogadaInvalida([jogInvalidaLinha, jogInvalidaColuna, jogInvalidaBloco]);
+    return (valido, valido ? null : jogInvalida);
   }
 
   /// Preenche um bloco 3x3 com números aleatórios de 1 a 9,
@@ -235,7 +236,6 @@ class LogicaSudoku {
       tabuleiro[posicao.$1][posicao.$2] = Celula(isFixo: false, valor: valor, rascunho: []);
       return (true, null);
     }
-
     return (false, jogadaInvalida);
   }
 }

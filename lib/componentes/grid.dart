@@ -105,16 +105,18 @@ class _GridSudokuState extends State<GridSudoku> with SingleTickerProviderStateM
     return AspectRatio(
       aspectRatio: 1.0,
       child: Container(
-        padding: const EdgeInsets.fromLTRB(3, 7, 3, 1),
         decoration: BoxDecoration(
-          //border: Border.all(width: 2),
+          border: Border.all(width: 2),
           image: DecorationImage(image: AssetImage("imagens/grid.png"), fit: BoxFit.cover),
         ),
-        child: GridView.count(
-          shrinkWrap: true,
-          crossAxisCount: 9,
-          physics: const NeverScrollableScrollPhysics(),
-          children: gerarCelulas(),
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(3, 6, 3, 1),
+          child: GridView.count(
+            shrinkWrap: true,
+            crossAxisCount: 9,
+            physics: const NeverScrollableScrollPhysics(),
+            children: gerarCelulas(),
+          ),
         ),
       ),
     );
