@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:developer';
 import 'package:sudoku_app/componentes/grid.dart';
 import 'package:sudoku_app/componentes/teclado.dart';
 import 'package:sudoku_app/logica/dificuldade.dart';
@@ -21,11 +20,13 @@ class JogoState extends State<Jogo> {
   List<List<Celula>> tabuleiro = [];
   (int, int)? posicaoSelecionada;
   Posicao? posicaoDestacadaDuplicidade;
+  List<int> contagemNumeros = [];
 
   @override
   void initState() {
     super.initState();
     tabuleiro = LogicaSudoku.gerarTabuleiro(widget.dificuldade);
+    contagemNumeros = LogicaSudoku.contarNumeros(tabuleiro);
   }
 
   void _inserirNumero(int valor) {
@@ -37,6 +38,7 @@ class JogoState extends State<Jogo> {
 
     if (sucesso) {
       setState(() {
+        contagemNumeros = LogicaSudoku.contarNumeros(tabuleiro);
         posicaoDestacadaDuplicidade = null;
       });
       return;
@@ -96,6 +98,7 @@ class JogoState extends State<Jogo> {
                 Teclado(
                   valoresDisponiveis: const [1, 2, 3, 4, 5, 6, 7, 8, 9],
                   inserirNumero: (valor) => _inserirNumero(valor),
+                  contagemNumeros: contagemNumeros,
                 ),
               ],
             ),

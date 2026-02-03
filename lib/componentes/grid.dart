@@ -106,7 +106,7 @@ class _GridSudokuState extends State<GridSudoku> with SingleTickerProviderStateM
       aspectRatio: 1.0,
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(width: 2),
+          //border: Border.all(width: 2),
           image: DecorationImage(image: AssetImage("imagens/grid.png"), fit: BoxFit.cover),
         ),
         child: Container(

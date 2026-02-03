@@ -238,4 +238,16 @@ class LogicaSudoku {
     }
     return (false, jogadaInvalida);
   }
+
+  static List<int> contarNumeros(List<List<Celula>> tabuleiro) {
+    var contagem = List<int>.filled(9, 0);
+    for (int i = 0; i < 9; i++) {
+      for (int j = 0; j < 9; j++) {
+        if (tabuleiro[i][j].valor != null && tabuleiro[i][j].valor != 0) {
+          contagem[tabuleiro[i][j].valor! - 1] = contagem[tabuleiro[i][j].valor! - 1] + 1;
+        }
+      }
+    }
+    return contagem;
+  }
 }
