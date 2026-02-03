@@ -20,6 +20,7 @@ class Jogo extends StatefulWidget {
 class JogoState extends State<Jogo> {
   List<List<Celula>> tabuleiro = [];
   (int, int)? posicaoSelecionada;
+  Posicao? posicaoDestacadaDuplicidade;
 
   @override
   void initState() {
@@ -28,15 +29,42 @@ class JogoState extends State<Jogo> {
   }
 
   void _inserirNumero(int valor) {
+    if (posicaoSelecionada == null || tabuleiro[posicaoSelecionada!.$1][posicaoSelecionada!.$2].isFixo) {
+      return;
+    }
+
     final (sucesso, jogadaInvalida) = LogicaSudoku.inserirNumero(tabuleiro, valor, posicaoSelecionada);
+
     if (sucesso) {
-      setState(() {});
-    } else {
-      print("Jogada inválida!");
+      setState(() {
+        posicaoDestacadaDuplicidade = null;
+      });
+      return;
+    }
+
+    if (jogadaInvalida?.repeteNaLinha == true && jogadaInvalida?.posicaoDuplicadaNaLinha != null) {
+      setState(() {
+        posicaoDestacadaDuplicidade = jogadaInvalida!.posicaoDuplicadaNaLinha;
+      });
+      return;
+    }
+
+    if (jogadaInvalida?.repeteNaColuna == true && jogadaInvalida?.posicaoDuplicadaNaColuna != null) {
+      setState(() {
+        posicaoDestacadaDuplicidade = jogadaInvalida!.posicaoDuplicadaNaColuna;
+      });
+      return;
+    }
+
+    if (jogadaInvalida?.repeteNoBloco == true && jogadaInvalida?.posicaoDuplicadaNoBloco != null) {
+      setState(() {
+        posicaoDestacadaDuplicidade = jogadaInvalida!.posicaoDuplicadaNoBloco;
+      });
+      return;
     }
   }
 
-  void _celulaSelecionada(Posicao posicao) {
+  void _celulaClicada(Posicao posicao) {
     posicaoSelecionada = posicao;
   }
 
@@ -59,7 +87,8 @@ class JogoState extends State<Jogo> {
                       aspectRatio: 1.0,
                       child: GridSudoku(
                         tabuleiro: tabuleiro,
-                        celulaSelecionada: (posicao) => _celulaSelecionada(posicao),
+                        celulaClicada: (posicao) => _celulaClicada(posicao),
+                        posicaoDestacadaDuplicidade: posicaoDestacadaDuplicidade,
                       ),
                     ),
                   ),
