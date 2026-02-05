@@ -17,30 +17,29 @@ class CelulaGrid extends StatelessWidget {
     return Padding(padding: EdgeInsetsGeometry.all(10), child: Image.asset(caminho));
   }
 
-  Wrap _gerarCelulaRascunho(Celula celula) {
+  Padding _gerarCelulaRascunho(Celula celula) {
     final maiorNumeroPossivel = 9;
     List<Text> numeros = [];
 
     for (int i = 1; i <= maiorNumeroPossivel; i++) {
       final existeNoRascunho = celula.rascunho.contains(i);
       final conteudo = existeNoRascunho ? '$i ' : ' ';
-      numeros.add(Text(conteudo, style: const TextStyle(fontSize: 8)));
+      numeros.add(Text(conteudo, textAlign: TextAlign.center, style: const TextStyle(fontSize: 10)));
     }
-    return Wrap(children: numeros);
+    return Padding(
+      padding: EdgeInsetsGeometry.all(2),
+      child: GridView.count(
+        shrinkWrap: true,
+        crossAxisCount: 3,
+        physics: const NeverScrollableScrollPhysics(),
+        childAspectRatio: 1.0,
+        children: numeros,
+      ),
+    );
   }
 
   Center _gerarCelulaFixa(Celula celula) {
     return Center(child: _recuperarNumero(celula, true));
-    // return Center(
-    //   child: Text(
-    //     celula.valor?.toString() ?? '',
-    //     style: TextStyle(
-    //       fontSize: 20,
-    //       fontWeight: FontWeight.bold,
-    //       color: Colors.black,
-    //     ),
-    //   ),
-    // );
   }
 
   Center _gerarCelulaPreenchida(Celula celula) {

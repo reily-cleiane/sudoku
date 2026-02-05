@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:sudoku_app/componentes/botoes_jogo.dart';
 import 'package:sudoku_app/componentes/grid.dart';
 import 'package:sudoku_app/componentes/teclado.dart';
 import 'package:sudoku_app/logica/dificuldade.dart';
 import 'package:sudoku_app/logica/logica.dart';
 import 'package:sudoku_app/modelos/celula.model.dart';
+import 'package:sudoku_app/modelos/historico_jogada.model.dart';
 import 'package:sudoku_app/modelos/posicao.model.dart';
 
 class Jogo extends StatefulWidget {
   //Recebe key (que é padrão do framework, título, e dificuldade do jogo)
-  const Jogo({super.key, required this.titulo, required this.dificuldade});
-  final String titulo;
+  const Jogo({super.key, required this.dificuldade});
   final Dificuldade dificuldade;
 
   @override
@@ -21,6 +22,10 @@ class JogoState extends State<Jogo> {
   (int, int)? posicaoSelecionada;
   Posicao? posicaoDestacadaDuplicidade;
   List<int> contagemNumeros = [];
+  Posicao? ultimaPosicaoJogada;
+  int? ultimoValorSubstituido;
+  bool modoRascunho = false;
+  List<HistoricoJogada> pilhaDesfazer = [];
 
   @override
   void initState() {
@@ -29,15 +34,68 @@ class JogoState extends State<Jogo> {
     contagemNumeros = LogicaSudoku.contarNumeros(tabuleiro);
   }
 
-  void _inserirNumero(int valor) {
+  void apagar() {
+    if (posicaoSelecionada != null && !tabuleiro[posicaoSelecionada!.$1][posicaoSelecionada!.$2].isFixo) {
+      setState(() {
+        tabuleiro[posicaoSelecionada!.$1][posicaoSelecionada!.$2].rascunho = [];
+        tabuleiro[posicaoSelecionada!.$1][posicaoSelecionada!.$2].valor = 0;
+      });
+    }
+  }
+
+  void desfazer() {
+    if (ultimaPosicaoJogada != null && ultimoValorSubstituido != null && pilhaDesfazer.isNotEmpty) {
+      setState(() {
+        final ultimaJogada = pilhaDesfazer.removeLast();
+        // Reverte o valor no tabuleiro
+        tabuleiro[ultimaJogada.posicao.$1][ultimaJogada.posicao.$2].valor = ultimaJogada.valorAntigo;
+        // Atualiza teclado
+        contagemNumeros = LogicaSudoku.contarNumeros(tabuleiro);
+      });
+    }
+  }
+
+  void anotar() {
+    setState(() {
+      modoRascunho = !modoRascunho;
+    });
+  }
+
+  void inserirAnotacao(int valor) {
     if (posicaoSelecionada == null || tabuleiro[posicaoSelecionada!.$1][posicaoSelecionada!.$2].isFixo) {
       return;
     }
+    final anotacaoExistente = tabuleiro[posicaoSelecionada!.$1][posicaoSelecionada!.$2].rascunho;
+    final (sucesso, jogadaInvalida) = LogicaSudoku.inserirNumero(tabuleiro, valor, posicaoSelecionada);
+    if (sucesso) {
+      setState(() {
+        tabuleiro[posicaoSelecionada!.$1][posicaoSelecionada!.$2].valor = 0;
+        for (var anotacao in anotacaoExistente) {
+          tabuleiro[posicaoSelecionada!.$1][posicaoSelecionada!.$2].rascunho.add(anotacao);
+        }
+        tabuleiro[posicaoSelecionada!.$1][posicaoSelecionada!.$2].rascunho.add(valor);
+      });
+      return;
+    }
+  }
+
+  void _inserirNumero(int valor) {
+    if (modoRascunho == true) {
+      inserirAnotacao(valor);
+      return;
+    }
+
+    if (posicaoSelecionada == null || tabuleiro[posicaoSelecionada!.$1][posicaoSelecionada!.$2].isFixo) {
+      return;
+    }
+    final valorSubstituidoTemporario = tabuleiro[posicaoSelecionada!.$1][posicaoSelecionada!.$2].valor;
 
     final (sucesso, jogadaInvalida) = LogicaSudoku.inserirNumero(tabuleiro, valor, posicaoSelecionada);
 
     if (sucesso) {
       setState(() {
+        pilhaDesfazer.add((posicao: posicaoSelecionada!, valorAntigo: valorSubstituidoTemporario, valorNovo: valor));
+
         contagemNumeros = LogicaSudoku.contarNumeros(tabuleiro);
         posicaoDestacadaDuplicidade = null;
       });
@@ -95,6 +153,11 @@ class JogoState extends State<Jogo> {
                     ),
                   ),
                 ),
+                Container(
+                  alignment: Alignment.centerRight,
+                  child: Text(modoRascunho == true ? "Modo de rascunho" : ""),
+                ),
+                BotoesJogo(apagar: apagar, desfazer: desfazer, anotar: anotar),
                 Teclado(
                   valoresDisponiveis: const [1, 2, 3, 4, 5, 6, 7, 8, 9],
                   inserirNumero: (valor) => _inserirNumero(valor),
