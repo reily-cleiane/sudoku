@@ -21,7 +21,7 @@ class Jogo extends StatefulWidget {
 class JogoState extends State<Jogo> {
   List<List<Celula>> tabuleiro = [];
   (int, int)? posicaoSelecionada;
-  Posicao? posicaoDestacadaDuplicidade;
+  Posicao? posicaoErroDuplicidade;
   List<int> contagemNumeros = [];
   Posicao? ultimaPosicaoJogada;
   int? ultimoValorSubstituido;
@@ -98,28 +98,28 @@ class JogoState extends State<Jogo> {
         pilhaDesfazer.add((posicao: posicaoSelecionada!, valorAntigo: valorSubstituidoTemporario, valorNovo: valor));
 
         contagemNumeros = LogicaSudoku.contarNumeros(tabuleiro);
-        posicaoDestacadaDuplicidade = null;
+        posicaoErroDuplicidade = null;
       });
       return;
     }
 
     if (jogadaInvalida?.repeteNaLinha == true && jogadaInvalida?.posicaoDuplicadaNaLinha != null) {
       setState(() {
-        posicaoDestacadaDuplicidade = jogadaInvalida!.posicaoDuplicadaNaLinha;
+        posicaoErroDuplicidade = jogadaInvalida!.posicaoDuplicadaNaLinha;
       });
       return;
     }
 
     if (jogadaInvalida?.repeteNaColuna == true && jogadaInvalida?.posicaoDuplicadaNaColuna != null) {
       setState(() {
-        posicaoDestacadaDuplicidade = jogadaInvalida!.posicaoDuplicadaNaColuna;
+        posicaoErroDuplicidade = jogadaInvalida!.posicaoDuplicadaNaColuna;
       });
       return;
     }
 
     if (jogadaInvalida?.repeteNoBloco == true && jogadaInvalida?.posicaoDuplicadaNoBloco != null) {
       setState(() {
-        posicaoDestacadaDuplicidade = jogadaInvalida!.posicaoDuplicadaNoBloco;
+        posicaoErroDuplicidade = jogadaInvalida!.posicaoDuplicadaNoBloco;
       });
       return;
     }
@@ -127,6 +127,7 @@ class JogoState extends State<Jogo> {
 
   void _celulaClicada(Posicao posicao) {
     posicaoSelecionada = posicao;
+    posicaoErroDuplicidade = null;
   }
 
   @override
@@ -143,13 +144,13 @@ class JogoState extends State<Jogo> {
                 SizedBox(
                   width: double.infinity,
                   child: Padding(
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(20),
                     child: AspectRatio(
                       aspectRatio: 1.0,
                       child: GridSudoku(
                         tabuleiro: tabuleiro,
                         eventoCelulaClicada: (posicao) => _celulaClicada(posicao),
-                        posicaoDestacadaDuplicidade: posicaoDestacadaDuplicidade,
+                        posicaoErroDuplicidade: posicaoErroDuplicidade,
                       ),
                     ),
                   ),

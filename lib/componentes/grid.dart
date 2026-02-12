@@ -9,112 +9,46 @@ class GridSudoku extends StatefulWidget {
     super.key,
     required this.tabuleiro,
     required this.eventoCelulaClicada,
-    this.posicaoDestacadaDuplicidade,
+    this.posicaoErroDuplicidade,
   });
   final List<List<Celula>> tabuleiro;
   final Function(Posicao posicao) eventoCelulaClicada;
-  final Posicao? posicaoDestacadaDuplicidade;
+  final Posicao? posicaoErroDuplicidade;
 
   @override
   State<GridSudoku> createState() => _GridSudokuState();
 }
 
-class _GridSudokuState extends State<GridSudoku> with SingleTickerProviderStateMixin {
-  Posicao? _posicaoCelulaSelecionada;
-  int? _valorSelecionado;
-  late AnimationController _controller;
-  late Animation<Color?> _colorAnimation;
-  Posicao? _posicaoInternaPiscar;
+class _GridSudokuState extends State<GridSudoku> {
+  bool _alternadorGatilho = false;
+  Posicao? _posicaoSelecionada;
 
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(duration: const Duration(milliseconds: 500), vsync: this);
-
-    _colorAnimation = ColorTween(
-      begin: Colors.transparent,
-      end: Estilo.corDestaqueBackgroundDuplicado,
-    ).animate(_controller);
-
-    _controller.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        _controller.reverse();
-      } else if (status == AnimationStatus.dismissed) {
-        // Limpar o estado para não ficar sempre em estado de piscando
-        setState(() {
-          _posicaoInternaPiscar = null;
-        });
-      }
+  void _tratarToque(int i, int j) {
+    setState(() {
+      _posicaoSelecionada = (i, j);
     });
-  }
-
-  @override
-  void dispose() {
-    // Liberar memória
-    _controller.dispose();
-    super.dispose();
+    widget.eventoCelulaClicada((i, j));
   }
 
   @override
   void didUpdateWidget(GridSudoku oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (widget.posicaoDestacadaDuplicidade != null) {
+    // Se o pai enviou QUALQUER posição de erro
+    if (widget.posicaoErroDuplicidade != null) {
       setState(() {
-        _posicaoInternaPiscar = widget.posicaoDestacadaDuplicidade;
+        _alternadorGatilho = !_alternadorGatilho; // Inverte o bit
       });
-      _controller.forward(from: 0.0); // Reinicia a animação do zero, para poder animar novamente em caso de novo erro
     }
-  }
-
-  void _tratarToque(int i, int j) {
-    setState(() {
-      _posicaoCelulaSelecionada = (i, j);
-      _valorSelecionado = widget.tabuleiro[i][j].valor;
-    });
-    widget.eventoCelulaClicada((i, j));
-  }
-
-  List<Widget> gerarCelulas() {
-    List<Widget> celulas = [];
-    for (int i = 0; i < widget.tabuleiro.length; i++) {
-      for (int j = 0; j < widget.tabuleiro.length; j++) {
-        // Isso aqui é para fazer o builder rodar quando a animação rodar
-        // se não, a animação dispara, mas o builder não vai mostrar
-        final celulaWidget = AnimatedBuilder(
-          animation: _colorAnimation,
-          builder: (context, child) {
-            final bool isPiscando = _posicaoInternaPiscar?.$1 == i && _posicaoInternaPiscar?.$2 == j;
-            final bool celulaSelecionada = i == _posicaoCelulaSelecionada?.$1 || j == _posicaoCelulaSelecionada?.$2;
-
-            return GestureDetector(
-              onTap: () => _tratarToque(i, j),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: isPiscando
-                      ? _colorAnimation
-                            .value // Agora ele vai pegar o valor atualizado no tempo
-                      : (_posicaoCelulaSelecionada?.$1 == i && _posicaoCelulaSelecionada?.$2 == j)
-                      ? Estilo.corDestaqueBackgroundCelulaSelecionada
-                      : Colors.transparent,
-                ),
-                child: CelulaGrid(
-                  celula: widget.tabuleiro[i][j],
-                  celulaEstaSelecionada: celulaSelecionada,
-                  valorSelecionado: _valorSelecionado,
-                ),
-              ),
-            );
-          },
-        );
-        celulas.add(celulaWidget);
-      }
-    }
-    return celulas;
   }
 
   @override
   Widget build(BuildContext context) {
+    int? valorSelecionado;
+    if (_posicaoSelecionada != null) {
+      valorSelecionado = widget.tabuleiro[_posicaoSelecionada!.$1][_posicaoSelecionada!.$2].valor;
+    }
+
     return AspectRatio(
       aspectRatio: 1.0,
       child: Container(
@@ -124,11 +58,32 @@ class _GridSudokuState extends State<GridSudoku> with SingleTickerProviderStateM
         ),
         child: Container(
           padding: const EdgeInsets.fromLTRB(3, 6, 3, 1),
-          child: GridView.count(
-            shrinkWrap: true,
-            crossAxisCount: 9,
+          child: GridView.builder(
+            // Usar builder é mais performático que GridView.count para grids dinâmicos
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 9),
+            itemCount: 81,
             physics: const NeverScrollableScrollPhysics(),
-            children: gerarCelulas(),
+            itemBuilder: (context, index) {
+              int i = index ~/ 9;
+              int j = index % 9;
+
+              bool estaSelecionada = _posicaoSelecionada?.$1 == i && _posicaoSelecionada?.$2 == j;
+              bool mesmaLinhaOuColuna =
+                  _posicaoSelecionada != null && (i == _posicaoSelecionada!.$1 || j == _posicaoSelecionada!.$2);
+              bool devePiscar = widget.posicaoErroDuplicidade?.$1 == i && widget.posicaoErroDuplicidade?.$2 == j;
+
+              return GestureDetector(
+                onTap: () => _tratarToque(i, j),
+                child: CelulaGrid(
+                  celula: widget.tabuleiro[i][j],
+                  estaSelecionada: estaSelecionada,
+                  celulaEstaNaMesmaLinhaOuColuna: mesmaLinhaOuColuna,
+                  valorSelecionado: valorSelecionado,
+                  devePiscar: devePiscar,
+                  gatilho: _alternadorGatilho,
+                ),
+              );
+            },
           ),
         ),
       ),

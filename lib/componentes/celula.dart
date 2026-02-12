@@ -3,88 +3,125 @@ import 'package:sudoku_app/estilo.dart';
 import 'package:sudoku_app/modelos/celula.model.dart';
 
 /// Classe responsável por gerar o conteúdo formatado de uma célula do grid
-class CelulaGrid extends StatelessWidget {
-  const CelulaGrid({super.key, required this.celula, this.valorSelecionado, this.celulaEstaSelecionada = false});
+class CelulaGrid extends StatefulWidget {
+  const CelulaGrid({
+    super.key,
+    required this.celula,
+    this.valorSelecionado,
+    this.celulaEstaNaMesmaLinhaOuColuna = false,
+    this.estaSelecionada = false,
+    this.posicaoParaPiscar = false, // Gatilho para piscar
+    this.gatilho = false,
+    this.devePiscar = false,
+  });
+
   final Celula celula;
   final int? valorSelecionado;
-  final bool? celulaEstaSelecionada;
+  final bool celulaEstaNaMesmaLinhaOuColuna;
+  final bool estaSelecionada;
+  final bool posicaoParaPiscar;
+  final bool gatilho;
+  final bool devePiscar;
 
-  bool get _deveDestacarValorSelecionado =>
-      valorSelecionado != null && celula.valor != 0 && celula.valor == valorSelecionado;
+  @override
+  State<CelulaGrid> createState() => _CelulaGridState();
+}
 
-  Color get _corDestaqueValorSelecionado => Estilo.corDestaqueBackgroundValorSelecionado;
-  Color get _corDestaqueLinhaColuna => Estilo.corDestaqueBackgroundLinhaColuna;
+class _CelulaGridState extends State<CelulaGrid> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<Color?> _animationPisca;
 
-  /// Recupera a imagem correta a ser exibida na célula, de acordo com o valor desejado
-  Padding _recuperarNumero(Celula celula, [bool fixo = false]) {
-    String nome = fixo ? "${celula.valor}.png" : "${celula.valor}a.png";
-    String caminho = "imagens/imgs_celulas/$nome";
-    return Padding(padding: const EdgeInsets.all(10), child: Image.asset(caminho));
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(duration: const Duration(milliseconds: 500), vsync: this);
+    _animationPisca = ColorTween(
+      begin: Colors.transparent,
+      end: Estilo.corDestaqueBackgroundDuplicado,
+    ).animate(_controller);
   }
 
-  Padding _gerarCelulaRascunho(Celula celula) {
-    final maiorNumeroPossivel = 9;
-    List<Text> numeros = [];
+  @override
+  void didUpdateWidget(CelulaGrid oldWidget) {
+    super.didUpdateWidget(oldWidget);
 
-    for (int i = 1; i <= maiorNumeroPossivel; i++) {
-      final existeNoRascunho = celula.rascunho.contains(i);
-      final conteudo = existeNoRascunho ? '$i ' : ' ';
-      final destacarValorEmRascunho = valorSelecionado == i;
-      numeros.add(
-        Text(
-          conteudo,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 10,
-            backgroundColor: destacarValorEmRascunho ? _corDestaqueValorSelecionado : null,
-          ),
-        ),
-      );
-    }
-    return Padding(
-      padding: const EdgeInsets.all(2),
-      child: GridView.count(
-        shrinkWrap: true,
-        crossAxisCount: 3,
-        physics: const NeverScrollableScrollPhysics(),
-        childAspectRatio: 1.0,
-        children: numeros,
-      ),
-    );
-  }
-
-  Container _gerarCelulaFixa(Celula celula) {
-    return Container(
-      color: _deveDestacarValorSelecionado ? _corDestaqueValorSelecionado : null,
-      child: Center(child: _recuperarNumero(celula, true)),
-    );
-  }
-
-  Container _gerarCelulaPreenchida(Celula celula) {
-    return Container(
-      color: _deveDestacarValorSelecionado ? _corDestaqueValorSelecionado : null,
-      child: Center(child: _recuperarNumero(celula, false)),
-    );
-  }
-
-  Widget _gerarCelula(Celula celula) {
-    //Célula definida originalmente
-    if (celula.isFixo) {
-      return _gerarCelulaFixa(celula);
-      //Célula com rascunhos
-    } else if ((celula.valor == 0 || celula.valor == null) && celula.rascunho.isNotEmpty) {
-      return _gerarCelulaRascunho(celula);
-      //Célula vazia
-    } else if (celula.valor == 0 || celula.valor == null) {
-      return Text('');
-      //Célula preenchida pelo usuário
-    } else {
-      return _gerarCelulaPreenchida(celula);
+    // 1. O gatilho mudou? (Houve erro em algum lugar do grid)
+    // 2. Eu sou a célula que deve piscar?
+    if (widget.gatilho != oldWidget.gatilho && widget.devePiscar) {
+      _controller.forward(from: 0.0).then((_) => _controller.reverse());
     }
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Color? _getCorFundo() {
+    // Ordem de prioridade dos destaques visuais
+    if (widget.estaSelecionada) return Estilo.corDestaqueBackgroundCelulaSelecionada;
+
+    if (widget.valorSelecionado != null && widget.celula.valor != 0 && widget.celula.valor == widget.valorSelecionado) {
+      return Estilo.corDestaqueBackgroundValorSelecionado;
+    }
+
+    if (widget.celulaEstaNaMesmaLinhaOuColuna) return Estilo.corDestaqueBackgroundLinhaColuna;
+
+    return null;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return _gerarCelula(celula);
+    return AnimatedBuilder(
+      animation: _animationPisca,
+      builder: (context, child) {
+        return Padding(
+          padding: EdgeInsets.all(2),
+          child: Container(
+            // O Stack permite sobrepor a cor de destaque fixo com a cor da animação (pisca)
+            decoration: BoxDecoration(color: _getCorFundo()),
+            child: Container(
+              color: _animationPisca.value, // Cor do pisca sobreposta
+              child: _construirConteudo(),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _construirConteudo() {
+    if (widget.celula.valor != 0) {
+      bool fixo = widget.celula.isFixo;
+      String nome = fixo ? "${widget.celula.valor}.png" : "${widget.celula.valor}a.png";
+      return Padding(padding: const EdgeInsets.all(8), child: Image.asset("imagens/imgs_celulas/$nome"));
+    }
+
+    if (widget.celula.rascunho.isNotEmpty) {
+      return _gerarGridRascunho();
+    }
+
+    return const SizedBox.shrink();
+  }
+
+  Widget _gerarGridRascunho() {
+    return GridView.count(
+      crossAxisCount: 3,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      childAspectRatio: 1.0,
+      children: List.generate(9, (index) {
+        int num = index + 1;
+        bool existe = widget.celula.rascunho.contains(num);
+        bool destacaRascunho = widget.valorSelecionado == num && existe;
+
+        return Container(
+          color: destacaRascunho ? Estilo.corDestaqueBackgroundValorSelecionado.withValues(alpha: 0.4) : null,
+          alignment: Alignment.center,
+          child: Text(existe ? '$num' : '', style: const TextStyle(fontSize: 10), textAlign: TextAlign.center),
+        );
+      }),
+    );
   }
 }
