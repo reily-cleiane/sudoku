@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sudoku_app/componentes/botoes_jogo.dart';
 import 'package:sudoku_app/componentes/grid.dart';
 import 'package:sudoku_app/componentes/teclado.dart';
+import 'package:sudoku_app/estilo.dart';
 import 'package:sudoku_app/logica/dificuldade.dart';
 import 'package:sudoku_app/logica/logica.dart';
 import 'package:sudoku_app/modelos/celula.model.dart';
@@ -147,7 +148,7 @@ class JogoState extends State<Jogo> {
                       aspectRatio: 1.0,
                       child: GridSudoku(
                         tabuleiro: tabuleiro,
-                        celulaClicada: (posicao) => _celulaClicada(posicao),
+                        eventoCelulaClicada: (posicao) => _celulaClicada(posicao),
                         posicaoDestacadaDuplicidade: posicaoDestacadaDuplicidade,
                       ),
                     ),
@@ -155,7 +156,10 @@ class JogoState extends State<Jogo> {
                 ),
                 Container(
                   alignment: Alignment.centerRight,
-                  child: Text(modoRascunho == true ? "Modo de rascunho" : ""),
+                  child: Text(
+                    modoRascunho == true ? "Modo de rascunho" : "",
+                    style: TextStyle(color: Estilo.corFonteRascunho, fontSize: 16.0),
+                  ),
                 ),
                 BotoesJogo(apagar: apagar, desfazer: desfazer, anotar: anotar),
                 Teclado(

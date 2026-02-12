@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:sudoku_app/componentes/celula.dart';
+import 'package:sudoku_app/estilo.dart';
 import 'package:sudoku_app/modelos/celula.model.dart';
 import 'package:sudoku_app/modelos/posicao.model.dart';
 
 class GridSudoku extends StatefulWidget {
-  const GridSudoku({super.key, required this.tabuleiro, required this.celulaClicada, this.posicaoDestacadaDuplicidade});
+  const GridSudoku({
+    super.key,
+    required this.tabuleiro,
+    required this.eventoCelulaClicada,
+    this.posicaoDestacadaDuplicidade,
+  });
   final List<List<Celula>> tabuleiro;
-  final Function(Posicao posicao) celulaClicada;
+  final Function(Posicao posicao) eventoCelulaClicada;
   final Posicao? posicaoDestacadaDuplicidade;
 
   @override
@@ -14,7 +20,8 @@ class GridSudoku extends StatefulWidget {
 }
 
 class _GridSudokuState extends State<GridSudoku> with SingleTickerProviderStateMixin {
-  Posicao? _celulaLocalDestacada;
+  Posicao? _posicaoCelulaSelecionada;
+  int? _valorSelecionado;
   late AnimationController _controller;
   late Animation<Color?> _colorAnimation;
   Posicao? _posicaoInternaPiscar;
@@ -26,7 +33,7 @@ class _GridSudokuState extends State<GridSudoku> with SingleTickerProviderStateM
 
     _colorAnimation = ColorTween(
       begin: Colors.transparent,
-      end: Colors.red.withValues(alpha: 0.2),
+      end: Estilo.corDestaqueBackgroundDuplicado,
     ).animate(_controller);
 
     _controller.addStatusListener((status) {
@@ -62,9 +69,10 @@ class _GridSudokuState extends State<GridSudoku> with SingleTickerProviderStateM
 
   void _tratarToque(int i, int j) {
     setState(() {
-      _celulaLocalDestacada = (i, j);
+      _posicaoCelulaSelecionada = (i, j);
+      _valorSelecionado = widget.tabuleiro[i][j].valor;
     });
-    widget.celulaClicada((i, j));
+    widget.eventoCelulaClicada((i, j));
   }
 
   List<Widget> gerarCelulas() {
@@ -77,6 +85,7 @@ class _GridSudokuState extends State<GridSudoku> with SingleTickerProviderStateM
           animation: _colorAnimation,
           builder: (context, child) {
             final bool isPiscando = _posicaoInternaPiscar?.$1 == i && _posicaoInternaPiscar?.$2 == j;
+            final bool celulaSelecionada = i == _posicaoCelulaSelecionada?.$1 || j == _posicaoCelulaSelecionada?.$2;
 
             return GestureDetector(
               onTap: () => _tratarToque(i, j),
@@ -85,11 +94,15 @@ class _GridSudokuState extends State<GridSudoku> with SingleTickerProviderStateM
                   color: isPiscando
                       ? _colorAnimation
                             .value // Agora ele vai pegar o valor atualizado no tempo
-                      : (_celulaLocalDestacada?.$1 == i && _celulaLocalDestacada?.$2 == j)
-                      ? const Color.fromARGB(92, 199, 155, 106)
+                      : (_posicaoCelulaSelecionada?.$1 == i && _posicaoCelulaSelecionada?.$2 == j)
+                      ? Estilo.corDestaqueBackgroundCelulaSelecionada
                       : Colors.transparent,
                 ),
-                child: CelulaGrid(celula: widget.tabuleiro[i][j]),
+                child: CelulaGrid(
+                  celula: widget.tabuleiro[i][j],
+                  celulaEstaSelecionada: celulaSelecionada,
+                  valorSelecionado: _valorSelecionado,
+                ),
               ),
             );
           },
