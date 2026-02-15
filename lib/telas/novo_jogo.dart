@@ -1,77 +1,84 @@
 import 'package:flutter/material.dart';
-import 'package:sudoku_app/componentes/grid.dart';
 import 'package:sudoku_app/logica/dificuldade.dart';
+import 'package:sudoku_app/services/recordes.dart';
 import 'package:sudoku_app/telas/jogo.dart';
-import 'dart:developer';
 
-class NovoJogo extends StatefulWidget {
-  const NovoJogo({super.key, required this.title});
+class NovoJogo extends StatelessWidget {
+  const NovoJogo({super.key});
 
-  final String title;
+  Widget _exibirRecorde(Dificuldade nivel) {
+    return FutureBuilder<int?>(
+      future: RecordesService.recuperarRecorde(nivel.runtimeType.toString()),
+      builder: (context, snapshot) {
+        if (snapshot.hasData && snapshot.data != null) {
+          return Text(
+            "Melhor: ${RecordesService.formatarTempo(snapshot.data!)}",
+            style: const TextStyle(fontSize: 12, color: Colors.grey),
+          );
+        }
+        return const Text("Sem recorde", style: TextStyle(fontSize: 12));
+      },
+    );
+  }
 
-  @override
-  _NovoJogoState createState() => _NovoJogoState();
-}
+  Widget _gerarBotaoDificuldade(BuildContext context, {required Dificuldade nivel}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 0),
 
-class _NovoJogoState extends State<NovoJogo> {
-  void iniciarJogo(Dificuldade dificuldade) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        //builder: (context) => Grid())
-        builder: (context) => Jogo(dificuldade: dificuldade),
+      child: ElevatedButton(
+        onPressed: () {
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Jogo(dificuldade: nivel)));
+        },
+
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color.fromARGB(230, 244, 241, 236),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+          padding: EdgeInsets.zero, // <--add this
+        ),
+        child: nivel.imagem,
       ),
+      // child: IconButton(
+      //   iconSize: 80, // Tamanho que a imagem ocupará
+      //   onPressed: () {
+      //     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Jogo(dificuldade: nivel)));
+      //   },
+      //   icon: Image.asset("imagens/botoes_dificuldade/$imagem", fit: BoxFit.contain),
+      // ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Sudoku"), centerTitle: true, backgroundColor: Colors.purple),
-      backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              width: double.infinity,
-              height: 50.0,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size.zero),
-                onPressed: () {
-                  iniciarJogo(DificuldadeFacil());
-                },
-                child: const Text('Fácil', style: TextStyle(color: Colors.black, fontSize: 20.0)),
+      body: Stack(
+        children: [
+          Positioned.fill(child: Image.asset("imagens/bg.jpg", fit: BoxFit.cover)),
+          SafeArea(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    "SUDOKU",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 48,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 255, 255, 255),
+                    ),
+                  ),
+                  const SizedBox(height: 50),
+                  _gerarBotaoDificuldade(context, nivel: DificuldadeFacil()),
+                  _gerarBotaoDificuldade(context, nivel: DificuldadeMedia()),
+                  _gerarBotaoDificuldade(context, nivel: DificuldadeDificil()),
+                  const SizedBox(height: 50),
+                  _exibirRecorde(DificuldadeFacil()),
+                ],
               ),
             ),
-            Padding(padding: const EdgeInsets.fromLTRB(0, 30.0, 0, 0)),
-
-            SizedBox(
-              width: double.infinity,
-              height: 50.0,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size.zero),
-                onPressed: () {
-                  iniciarJogo(DificuldadeMedia());
-                },
-                child: const Text('Médio', style: TextStyle(color: Colors.black, fontSize: 20.0)),
-              ),
-            ),
-            Padding(padding: const EdgeInsets.fromLTRB(0, 30.0, 0, 0)),
-
-            SizedBox(
-              width: double.infinity,
-              height: 50.0,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size.zero),
-                onPressed: () {
-                  iniciarJogo(DificuldadeDificil());
-                },
-                child: const Text('Difícil', style: TextStyle(color: Colors.black, fontSize: 20.0)),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
-  } // Fim do build
+  }
 }

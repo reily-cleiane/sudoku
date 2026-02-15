@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sudoku_app/componentes/botoes_jogo.dart';
 import 'package:sudoku_app/componentes/grid.dart';
@@ -8,6 +9,8 @@ import 'package:sudoku_app/logica/logica.dart';
 import 'package:sudoku_app/modelos/celula.model.dart';
 import 'package:sudoku_app/modelos/historico_jogada.model.dart';
 import 'package:sudoku_app/modelos/posicao.model.dart';
+import 'package:sudoku_app/services/recordes.dart';
+import 'package:sudoku_app/telas/fim_jogo.dart';
 
 class Jogo extends StatefulWidget {
   //Recebe key (que é padrão do framework, título, e dificuldade do jogo)
@@ -27,12 +30,61 @@ class JogoState extends State<Jogo> {
   int? ultimoValorSubstituido;
   bool modoRascunho = false;
   List<HistoricoJogada> pilhaDesfazer = [];
+  final double paddingPadrao = 20;
+  Timer? _timer;
+  int _segundosDecorridos = 0;
 
   @override
   void initState() {
     super.initState();
     tabuleiro = LogicaSudoku.gerarTabuleiro(widget.dificuldade);
     contagemNumeros = LogicaSudoku.contarNumeros(tabuleiro);
+    _iniciarCronometro();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel(); // Importante para não vazar memória
+    super.dispose();
+  }
+
+  void _iniciarCronometro() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        _segundosDecorridos++;
+      });
+    });
+  }
+
+  bool _terminouJogo() {
+    for (int cont in contagemNumeros) {
+      if (cont != 9) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  void _finalizarJogo() async {
+    _timer?.cancel();
+
+    bool novoRecorde = await RecordesService.verificarESalvarRecorde(
+      widget.dificuldade.runtimeType.toString(),
+      _segundosDecorridos,
+    );
+
+    if (!mounted) return;
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FimJogo(
+          tempoGasto: RecordesService.formatarTempo(_segundosDecorridos),
+          dificuldade: widget.dificuldade,
+          foiRecorde: novoRecorde,
+        ),
+      ),
+    );
   }
 
   void apagar() {
@@ -56,13 +108,13 @@ class JogoState extends State<Jogo> {
     }
   }
 
-  void anotar() {
+  void _anotar() {
     setState(() {
       modoRascunho = !modoRascunho;
     });
   }
 
-  void inserirAnotacao(int valor) {
+  void _inserirAnotacao(int valor) {
     if (posicaoSelecionada == null || tabuleiro[posicaoSelecionada!.$1][posicaoSelecionada!.$2].isFixo) {
       return;
     }
@@ -82,7 +134,7 @@ class JogoState extends State<Jogo> {
 
   void _inserirNumero(int valor) {
     if (modoRascunho == true) {
-      inserirAnotacao(valor);
+      _inserirAnotacao(valor);
       return;
     }
 
@@ -96,9 +148,12 @@ class JogoState extends State<Jogo> {
     if (sucesso) {
       setState(() {
         pilhaDesfazer.add((posicao: posicaoSelecionada!, valorAntigo: valorSubstituidoTemporario, valorNovo: valor));
-
         contagemNumeros = LogicaSudoku.contarNumeros(tabuleiro);
         posicaoErroDuplicidade = null;
+
+        if (_terminouJogo()) {
+          _finalizarJogo();
+        }
       });
       return;
     }
@@ -141,10 +196,11 @@ class JogoState extends State<Jogo> {
           body: SingleChildScrollView(
             child: Column(
               children: [
+                Text(RecordesService.formatarTempo(_segundosDecorridos)),
                 SizedBox(
                   width: double.infinity,
                   child: Padding(
-                    padding: const EdgeInsets.all(20),
+                    padding: EdgeInsets.all(paddingPadrao),
                     child: AspectRatio(
                       aspectRatio: 1.0,
                       child: GridSudoku(
@@ -156,17 +212,24 @@ class JogoState extends State<Jogo> {
                   ),
                 ),
                 Container(
+                  padding: EdgeInsets.symmetric(horizontal: paddingPadrao, vertical: 0),
                   alignment: Alignment.centerRight,
                   child: Text(
                     modoRascunho == true ? "Modo de rascunho" : "",
                     style: TextStyle(color: Estilo.corFonteRascunho, fontSize: 16.0),
                   ),
                 ),
-                BotoesJogo(apagar: apagar, desfazer: desfazer, anotar: anotar),
-                Teclado(
-                  valoresDisponiveis: const [1, 2, 3, 4, 5, 6, 7, 8, 9],
-                  inserirNumero: (valor) => _inserirNumero(valor),
-                  contagemNumeros: contagemNumeros,
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: paddingPadrao, vertical: 10),
+                  child: BotoesJogo(apagar: apagar, desfazer: desfazer, anotar: _anotar),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: paddingPadrao, vertical: 10),
+                  child: Teclado(
+                    valoresDisponiveis: const [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                    inserirNumero: (valor) => _inserirNumero(valor),
+                    contagemNumeros: contagemNumeros,
+                  ),
                 ),
               ],
             ),

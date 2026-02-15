@@ -95,7 +95,7 @@ class _CelulaGridState extends State<CelulaGrid> with SingleTickerProviderStateM
     if (widget.celula.valor != 0) {
       bool fixo = widget.celula.isFixo;
       String nome = fixo ? "${widget.celula.valor}.png" : "${widget.celula.valor}a.png";
-      return Padding(padding: const EdgeInsets.all(8), child: Image.asset("imagens/imgs_celulas/$nome"));
+      return Padding(padding: const EdgeInsets.all(10), child: Image.asset("imagens/imgs_celulas/$nome"));
     }
 
     if (widget.celula.rascunho.isNotEmpty) {
