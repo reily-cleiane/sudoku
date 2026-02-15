@@ -56,16 +56,11 @@ class _GridSudokuState extends State<GridSudoku> {
           image: DecorationImage(image: AssetImage("imagens/grid.png"), fit: BoxFit.cover),
         ),
         child: Container(
-          padding: const EdgeInsets.fromLTRB(3, 6, 3, 1),
+          padding: const EdgeInsets.fromLTRB(4, 6, 3, 1),
           child: GridView.builder(
             shrinkWrap: true,
             primary: false,
-            // Usar builder é mais performático que GridView.count para grids dinâmicos
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 9,
-              mainAxisSpacing: 0, // Garante que não haja espaço vertical entre células
-              crossAxisSpacing: 0,
-            ), // Garante que não haja espaço horizontal),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 9),
             itemCount: 81,
             physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
