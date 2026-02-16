@@ -63,6 +63,7 @@ flutter:
     - imagens/grid.png
     - imagens/bg.jpg
     - imagens/bg_fim.png
+    - imagens/bg_home.png
     - imagens/btn_novo_jogo.png
     - imagens/teclado/btn1.png
     - imagens/teclado/btn2.png

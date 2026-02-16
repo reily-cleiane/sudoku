@@ -21,63 +21,52 @@ class NovoJogo extends StatelessWidget {
     );
   }
 
-  Widget _gerarBotaoDificuldade(BuildContext context, {required Dificuldade nivel}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 0),
+  Widget _gerarBotaoDificuldade(
+    BuildContext context,
+    BoxConstraints constraints, { // Recebe as restrições da imagem
+    required Dificuldade nivel,
+    required double topPercent,
+  }) {
+    // Calcula o tamanho baseado no que a imagem (constraints) realmente tem
+    double larguraBotao = constraints.maxWidth * 0.45;
+    double alturaBotao = constraints.maxHeight * 0.12;
 
-      child: ElevatedButton(
-        onPressed: () {
+    return Align(
+      alignment: FractionalOffset(0.5, topPercent),
+      child: GestureDetector(
+        onTap: () {
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Jogo(dificuldade: nivel)));
         },
-
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color.fromARGB(230, 244, 241, 236),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-          padding: EdgeInsets.zero, // <--add this
-        ),
-        child: nivel.imagem,
+        child: Container(width: larguraBotao, height: alturaBotao, child: nivel.imagem),
       ),
-      // child: IconButton(
-      //   iconSize: 80, // Tamanho que a imagem ocupará
-      //   onPressed: () {
-      //     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Jogo(dificuldade: nivel)));
-      //   },
-      //   icon: Image.asset("imagens/botoes_dificuldade/$imagem", fit: BoxFit.contain),
-      // ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Positioned.fill(child: Image.asset("imagens/bg.jpg", fit: BoxFit.cover)),
-          SafeArea(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+      backgroundColor: const Color.fromARGB(255, 248, 243, 229),
+      body: Center(
+        child: AspectRatio(
+          aspectRatio: 512 / 768,
+          child: LayoutBuilder(
+            // Widget para capturar as dimensões da imagem
+            builder: (context, constraints) {
+              return Stack(
                 children: [
-                  const Text(
-                    "SUDOKU",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 48,
-                      fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 255, 255, 255),
-                    ),
-                  ),
-                  const SizedBox(height: 50),
-                  _gerarBotaoDificuldade(context, nivel: DificuldadeFacil()),
-                  _gerarBotaoDificuldade(context, nivel: DificuldadeMedia()),
-                  _gerarBotaoDificuldade(context, nivel: DificuldadeDificil()),
-                  const SizedBox(height: 50),
-                  _exibirRecorde(DificuldadeFacil()),
+                  Positioned.fill(child: Image.asset("imagens/bg_home.png", fit: BoxFit.fill)),
+
+                  // Pega as 'constraints' para que o botão saiba o tamanho da imagem
+                  _gerarBotaoDificuldade(context, constraints, nivel: DificuldadeFacil(), topPercent: 0.33),
+                  _gerarBotaoDificuldade(context, constraints, nivel: DificuldadeMedia(), topPercent: 0.51),
+                  _gerarBotaoDificuldade(context, constraints, nivel: DificuldadeDificil(), topPercent: 0.7),
+
+                  Align(alignment: const FractionalOffset(0.5, 0.87), child: _exibirRecorde(DificuldadeFacil())),
                 ],
-              ),
-            ),
+              );
+            },
           ),
-        ],
+        ),
       ),
     );
   }
