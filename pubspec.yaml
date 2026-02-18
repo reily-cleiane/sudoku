@@ -61,7 +61,7 @@ flutter:
   assets:
     - imagens/imagemgrid.png
     - imagens/grid.png
-    - imagens/bg.jpg
+    - imagens/bg_jogo.png
     - imagens/bg_fim.png
     - imagens/bg_home.png
     - imagens/btn_novo_jogo.png

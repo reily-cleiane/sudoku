@@ -11,6 +11,7 @@ import 'package:sudoku_app/modelos/historico_jogada.model.dart';
 import 'package:sudoku_app/modelos/posicao.model.dart';
 import 'package:sudoku_app/services/recordes.dart';
 import 'package:sudoku_app/telas/fim_jogo.dart';
+import 'package:sudoku_app/telas/novo_jogo.dart';
 
 class Jogo extends StatefulWidget {
   //Recebe key (que é padrão do framework, título, e dificuldade do jogo)
@@ -119,6 +120,13 @@ class JogoState extends State<Jogo> {
       return;
     }
     final anotacaoExistente = tabuleiro[posicaoSelecionada!.$1][posicaoSelecionada!.$2].rascunho;
+    if (anotacaoExistente.contains(valor)) {
+      setState(() {
+        tabuleiro[posicaoSelecionada!.$1][posicaoSelecionada!.$2].rascunho.removeWhere((numero) => numero == valor);
+      });
+      return;
+    }
+
     final (sucesso, jogadaInvalida) = LogicaSudoku.inserirNumero(tabuleiro, valor, posicaoSelecionada);
     if (sucesso) {
       setState(() {
@@ -189,14 +197,38 @@ class JogoState extends State<Jogo> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Positioned.fill(child: Image.asset("imagens/bg.jpg", fit: BoxFit.cover)),
+        Positioned.fill(child: Image.asset("imagens/bg_jogo.png", fit: BoxFit.cover)),
         Scaffold(
-          backgroundColor: Colors.transparent,
-          appBar: AppBar(title: const Text("Sudoku"), centerTitle: true, backgroundColor: Colors.purple),
+          backgroundColor: const Color.fromARGB(50, 255, 255, 255),
+          // appBar: AppBar(title: const Text("Sudoku"), centerTitle: true),
           body: SingleChildScrollView(
             child: Column(
               children: [
-                Text(RecordesService.formatarTempo(_segundosDecorridos)),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: paddingPadrao, vertical: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const NovoJogo()));
+                        },
+                        style: TextButton.styleFrom(padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5)),
+                        child: const Text(
+                          "Novo Jogo",
+                          style: TextStyle(color: Color.fromARGB(255, 207, 118, 15), fontWeight: FontWeight.w500),
+                        ),
+                      ),
+
+                      // Lado Direito: Cronômetro
+                      Text(
+                        RecordesService.formatarTempo(_segundosDecorridos),
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Estilo.corCronometro),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(padding: EdgeInsets.fromLTRB(0, 40, 0, 0)),
                 SizedBox(
                   width: double.infinity,
                   child: Padding(
