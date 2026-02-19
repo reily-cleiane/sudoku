@@ -91,6 +91,7 @@ class JogoState extends State<Jogo> {
   void apagar() {
     if (posicaoSelecionada != null && !tabuleiro[posicaoSelecionada!.$1][posicaoSelecionada!.$2].isFixo) {
       setState(() {
+        contagemNumeros = LogicaSudoku.contarNumeros(tabuleiro);
         tabuleiro[posicaoSelecionada!.$1][posicaoSelecionada!.$2].rascunho = [];
         tabuleiro[posicaoSelecionada!.$1][posicaoSelecionada!.$2].valor = 0;
       });
