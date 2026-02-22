@@ -24,7 +24,7 @@ class Teclado extends StatelessWidget {
           child: GestureDetector(
             onTap: () => clique(index + 1),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0), // Espaçamento entre botões
+              padding: const EdgeInsets.symmetric(horizontal: 5.0), // Espaçamento entre botões
               child: AspectRatio(
                 aspectRatio: 1, // Mantém o botão quadrado
                 child: Container(

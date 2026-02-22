@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sudoku_app/logica/dificuldade.dart';
+import 'package:sudoku_app/telas/fim_jogo.dart';
 import 'package:sudoku_app/telas/novo_jogo.dart';
 
 void main() {
@@ -32,8 +34,10 @@ class MyApp extends StatelessWidget {
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+        fontFamily: 'IndieFlower',
       ),
-      home: const NovoJogo(),
+      //home: FimJogo(tempoGasto: '500', dificuldade: DificuldadeFacil(), foiRecorde: true),
+      home: NovoJogo(),
     );
   }
 }

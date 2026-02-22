@@ -57,9 +57,14 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
+  fonts:
+    - family: IndieFlower
+      fonts:
+        - asset: fonts/Indie_Flower/IndieFlower-Regular.ttf
+          style: normal
+
   # To add assets to your application, add an assets section, like this:
   assets:
-    - imagens/imagemgrid.png
     - imagens/grid.png
     - imagens/bg_jogo.png
     - imagens/bg_fim.png

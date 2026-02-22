@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sudoku_app/estilo.dart';
 import 'package:sudoku_app/logica/dificuldade.dart';
 import 'package:sudoku_app/telas/novo_jogo.dart';
 
@@ -25,17 +26,24 @@ class FimJogo extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(height: MediaQuery.of(context).size.height * 0.55),
-                Text("Nível: ${dificuldade.nome}", style: const TextStyle(fontSize: 18)),
-                Text("Tempo: $tempoGasto", style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w500)),
+                Text("Nível: ${dificuldade.nome}", style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800)),
+                Text(
+                  "Tempo: $tempoGasto",
+                  style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w800, color: Estilo.corPreto),
+                ),
                 if (foiRecorde)
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 20),
-                    child: Text("NOVO RECORDE!", style: TextStyle(color: Colors.orange, fontSize: 30)),
+                    child: Text(
+                      "NOVO RECORDE!",
+                      style: TextStyle(color: Estilo.corPrimaria, fontSize: 42, fontWeight: FontWeight.w900),
+                    ),
                   ),
 
+                SizedBox(height: 20),
                 GestureDetector(
                   onTap: () => _navegarTelaNovoJogo(context),
-                  child: Image.asset("imagens/btn_novo_jogo.png", fit: BoxFit.contain),
+                  child: SizedBox(width: 200, child: Image.asset("imagens/btn_novo_jogo.png", fit: BoxFit.contain)),
                 ),
               ],
             ),

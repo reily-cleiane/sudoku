@@ -33,16 +33,19 @@ class _GridSudokuState extends State<GridSudoku> {
   void didUpdateWidget(GridSudoku oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    // Se o pai enviou QUALQUER posição de erro
-    if (widget.posicaoErroDuplicidade != null) {
+    // SÓ inverte o gatilho se a posição de erro MUDOU em relação ao estado anterior
+    // ou se não havia erro e agora há.
+    if (widget.posicaoErroDuplicidade != null && widget.posicaoErroDuplicidade != oldWidget.posicaoErroDuplicidade) {
       setState(() {
-        _alternadorGatilho = !_alternadorGatilho; // Inverte o bit
+        _alternadorGatilho = !_alternadorGatilho;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    const porcentagemBordaLateral = 12.69531 / 100;
+    const porcentagemBordaTopo = 10.64453 / 100;
     int? valorSelecionado;
     if (_posicaoSelecionada != null) {
       valorSelecionado = widget.tabuleiro[_posicaoSelecionada!.$1][_posicaoSelecionada!.$2].valor;
@@ -56,11 +59,16 @@ class _GridSudokuState extends State<GridSudoku> {
           image: DecorationImage(image: AssetImage("imagens/grid.png"), fit: BoxFit.cover),
         ),
         child: Container(
-          padding: const EdgeInsets.fromLTRB(4, 6, 3, 1),
+          padding: EdgeInsets.fromLTRB(
+            MediaQuery.of(context).size.width * porcentagemBordaLateral,
+            MediaQuery.of(context).size.width * porcentagemBordaTopo,
+            MediaQuery.of(context).size.width * porcentagemBordaLateral,
+            0,
+          ),
           child: GridView.builder(
             shrinkWrap: true,
             primary: false,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 9),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 9, childAspectRatio: 0.94),
             itemCount: 81,
             physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {

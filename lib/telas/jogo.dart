@@ -203,68 +203,76 @@ class JogoState extends State<Jogo> {
           backgroundColor: const Color.fromARGB(50, 255, 255, 255),
           // appBar: AppBar(title: const Text("Sudoku"), centerTitle: true),
           body: SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: paddingPadrao, vertical: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const NovoJogo()));
-                        },
-                        style: TextButton.styleFrom(padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5)),
-                        child: const Text(
-                          "Novo Jogo",
-                          style: TextStyle(color: Color.fromARGB(255, 207, 118, 15), fontWeight: FontWeight.w500),
+            child: SafeArea(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: paddingPadrao, vertical: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => const NovoJogo()),
+                            );
+                          },
+                          style: TextButton.styleFrom(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10)),
+                          child: const Text(
+                            "Novo Jogo",
+                            style: TextStyle(color: Estilo.corPrimaria, fontSize: 20, fontWeight: FontWeight.w500),
+                          ),
                         ),
-                      ),
 
-                      // Lado Direito: Cronômetro
-                      Text(
-                        RecordesService.formatarTempo(_segundosDecorridos),
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Estilo.corCronometro),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(padding: EdgeInsets.fromLTRB(0, 40, 0, 0)),
-                SizedBox(
-                  width: double.infinity,
-                  child: Padding(
-                    padding: EdgeInsets.all(paddingPadrao),
-                    child: AspectRatio(
-                      aspectRatio: 1.0,
-                      child: GridSudoku(
-                        tabuleiro: tabuleiro,
-                        eventoCelulaClicada: (posicao) => _celulaClicada(posicao),
-                        posicaoErroDuplicidade: posicaoErroDuplicidade,
-                      ),
+                        const Text(
+                          'Sudoku',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 70, color: Estilo.corPrimaria, fontWeight: FontWeight.w600),
+                        ),
+
+                        SizedBox(
+                          width: 50,
+                          child: Text(
+                            textAlign: TextAlign.end,
+                            RecordesService.formatarTempo(_segundosDecorridos),
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Estilo.corSecundaria),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: paddingPadrao, vertical: 0),
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                    modoRascunho == true ? "Modo de rascunho" : "",
-                    style: TextStyle(color: Estilo.corFonteRascunho, fontSize: 16.0),
+                  SizedBox(
+                    width: double.infinity,
+                    child: GridSudoku(
+                      tabuleiro: tabuleiro,
+                      eventoCelulaClicada: (posicao) => _celulaClicada(posicao),
+                      posicaoErroDuplicidade: posicaoErroDuplicidade,
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: paddingPadrao, vertical: 10),
-                  child: BotoesJogo(apagar: apagar, desfazer: desfazer, anotar: _anotar),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: paddingPadrao, vertical: 10),
-                  child: Teclado(
-                    valoresDisponiveis: const [1, 2, 3, 4, 5, 6, 7, 8, 9],
-                    inserirNumero: (valor) => _inserirNumero(valor),
-                    contagemNumeros: contagemNumeros,
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: paddingPadrao, vertical: 0),
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      modoRascunho == true ? "Modo de rascunho" : "",
+                      style: TextStyle(color: Estilo.corSecundaria, fontSize: 16.0),
+                    ),
                   ),
-                ),
-              ],
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: paddingPadrao, vertical: 10),
+                    child: BotoesJogo(apagar: apagar, desfazer: desfazer, anotar: _anotar),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: paddingPadrao, vertical: 10),
+                    child: Teclado(
+                      valoresDisponiveis: const [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                      inserirNumero: (valor) => _inserirNumero(valor),
+                      contagemNumeros: contagemNumeros,
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+                ],
+              ),
             ),
           ),
         ),
