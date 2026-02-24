@@ -14,10 +14,20 @@ class NovoJogo extends StatelessWidget {
         if (snapshot.hasData && snapshot.data != null) {
           return Text(
             "Melhor: ${RecordesService.formatarTempo(snapshot.data!)}",
-            style: const TextStyle(fontSize: 18, color: Colors.grey, fontWeight: FontWeight.w500),
+            style: TextStyle(
+              fontSize: (MediaQuery.of(context).size.width * 0.04).clamp(20.0, 35.0),
+              color: Colors.grey,
+              fontWeight: FontWeight.w500,
+            ),
           );
         }
-        return const Text("Sem recorde", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500));
+        return Text(
+          "Sem recorde",
+          style: TextStyle(
+            fontSize: (MediaQuery.of(context).size.width * 0.04).clamp(20.0, 35.0),
+            fontWeight: FontWeight.w500,
+          ),
+        );
       },
     );
   }

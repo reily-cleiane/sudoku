@@ -206,8 +206,9 @@ class JogoState extends State<Jogo> {
             child: SafeArea(
               child: Column(
                 children: [
+                  SizedBox(height: MediaQuery.of(context).size.width * 0.05),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: paddingPadrao, vertical: 10),
+                    padding: EdgeInsets.symmetric(horizontal: paddingPadrao, vertical: 0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -219,9 +220,13 @@ class JogoState extends State<Jogo> {
                             );
                           },
                           style: TextButton.styleFrom(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10)),
-                          child: const Text(
+                          child: Text(
                             "Novo Jogo",
-                            style: TextStyle(color: Estilo.corPrimaria, fontSize: 20, fontWeight: FontWeight.w500),
+                            style: TextStyle(
+                              color: Estilo.corPrimaria,
+                              fontSize: (MediaQuery.of(context).size.width * 0.04).clamp(20.0, 35.0),
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
 
@@ -232,11 +237,15 @@ class JogoState extends State<Jogo> {
                         ),
 
                         SizedBox(
-                          width: 50,
+                          width: 100,
                           child: Text(
                             textAlign: TextAlign.end,
                             RecordesService.formatarTempo(_segundosDecorridos),
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Estilo.corSecundaria),
+                            style: TextStyle(
+                              fontSize: (MediaQuery.of(context).size.width * 0.04).clamp(20.0, 35.0),
+                              fontWeight: FontWeight.w600,
+                              color: Estilo.corSecundaria,
+                            ),
                           ),
                         ),
                       ],
@@ -255,7 +264,10 @@ class JogoState extends State<Jogo> {
                     alignment: Alignment.centerRight,
                     child: Text(
                       modoRascunho == true ? "Modo de rascunho" : "",
-                      style: TextStyle(color: Estilo.corSecundaria, fontSize: 16.0),
+                      style: TextStyle(
+                        color: Estilo.corSecundaria,
+                        fontSize: (MediaQuery.of(context).size.width * 0.03).clamp(16.0, 28.0),
+                      ),
                     ),
                   ),
                   Padding(

@@ -7,17 +7,21 @@ class BotoesJogo extends StatelessWidget {
   final VoidCallback desfazer;
   final VoidCallback anotar;
 
-  Widget _gerarBotao({required String nomeImagem, required String rotulo, required VoidCallback onTap}) {
+  Widget _gerarBotao({required String nomeImagem, required VoidCallback onTap}) {
     return Expanded(
-      // Força os botões a dividirem o espaço disponível igualmente
-      child: IconButton(
-        // O constraints garante que o botão não cresça além de um limite razoável
-        constraints: const BoxConstraints(maxWidth: 80, maxHeight: 80),
-        icon: Image.asset(
-          "imagens/botoes_jogo/$nomeImagem",
-          fit: BoxFit.contain, // Faz a imagem caber dentro do ícone sem distorcer
+      child: GestureDetector(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0), // Espaçamento entre botões
+          child: AspectRatio(
+            aspectRatio: 1.4782, // Mantém o botão quadrado
+            child: Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(image: AssetImage("imagens/botoes_jogo/$nomeImagem"), fit: BoxFit.cover),
+              ),
+            ),
+          ),
         ),
-        onPressed: onTap,
       ),
     );
   }
@@ -30,9 +34,13 @@ class BotoesJogo extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _gerarBotao(nomeImagem: 'btn_apagar.png', rotulo: 'Apagar', onTap: apagar),
-          _gerarBotao(nomeImagem: 'btn_desfazer.png', rotulo: 'Desfazer', onTap: desfazer),
-          _gerarBotao(nomeImagem: 'btn_rascunho.png', rotulo: 'Anotar', onTap: anotar),
+          SizedBox(width: MediaQuery.of(context).size.width * 0.1),
+          _gerarBotao(nomeImagem: 'btn_apagar.png', onTap: apagar),
+          SizedBox(width: MediaQuery.of(context).size.width * 0.1),
+          _gerarBotao(nomeImagem: 'btn_desfazer.png', onTap: desfazer),
+          SizedBox(width: MediaQuery.of(context).size.width * 0.1),
+          _gerarBotao(nomeImagem: 'btn_rascunho.png', onTap: anotar),
+          SizedBox(width: MediaQuery.of(context).size.width * 0.1),
         ],
       ),
     );
