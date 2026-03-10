@@ -91,9 +91,10 @@ class JogoState extends State<Jogo> {
   void apagar() {
     if (posicaoSelecionada != null && !tabuleiro[posicaoSelecionada!.$1][posicaoSelecionada!.$2].isFixo) {
       setState(() {
-        contagemNumeros = LogicaSudoku.contarNumeros(tabuleiro);
         tabuleiro[posicaoSelecionada!.$1][posicaoSelecionada!.$2].rascunho = [];
         tabuleiro[posicaoSelecionada!.$1][posicaoSelecionada!.$2].valor = 0;
+        // Sempre contar APÓS a modificação do valor
+        contagemNumeros = LogicaSudoku.contarNumeros(tabuleiro);
       });
     }
   }
@@ -105,6 +106,7 @@ class JogoState extends State<Jogo> {
         // Reverte o valor no tabuleiro
         tabuleiro[ultimaJogada.posicao.$1][ultimaJogada.posicao.$2].valor = ultimaJogada.valorAntigo;
         // Atualiza teclado
+        // Sempre contar APÓS a modificação do valor
         contagemNumeros = LogicaSudoku.contarNumeros(tabuleiro);
       });
     }
@@ -212,14 +214,17 @@ class JogoState extends State<Jogo> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        TextButton(
+                        ElevatedButton(
                           onPressed: () {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(builder: (context) => const NovoJogo()),
                             );
                           },
-                          style: TextButton.styleFrom(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10)),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Estilo.corBg,
+                            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                          ),
                           child: Text(
                             "Novo Jogo",
                             style: TextStyle(
@@ -229,20 +234,25 @@ class JogoState extends State<Jogo> {
                             ),
                           ),
                         ),
+                        Padding(padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0)),
 
-                        const Text(
+                        Text(
                           'Sudoku',
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 70, color: Estilo.corPrimaria, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                            fontSize: (MediaQuery.of(context).size.width * 0.2).clamp(40, 70),
+                            color: Estilo.corPrimaria,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
 
-                        SizedBox(
-                          width: 100,
+                        Expanded(
+                          flex: 1,
                           child: Text(
                             textAlign: TextAlign.end,
                             RecordesService.formatarTempo(_segundosDecorridos),
                             style: TextStyle(
-                              fontSize: (MediaQuery.of(context).size.width * 0.04).clamp(20.0, 35.0),
+                              fontSize: (MediaQuery.of(context).size.width * 0.045).clamp(22.0, 35.0),
                               fontWeight: FontWeight.w600,
                               color: Estilo.corSecundaria,
                             ),
@@ -266,7 +276,8 @@ class JogoState extends State<Jogo> {
                       modoRascunho == true ? "Modo de rascunho" : "",
                       style: TextStyle(
                         color: Estilo.corSecundaria,
-                        fontSize: (MediaQuery.of(context).size.width * 0.03).clamp(16.0, 28.0),
+                        fontSize: (MediaQuery.of(context).size.width * 0.04).clamp(18.0, 28.0),
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
@@ -275,7 +286,7 @@ class JogoState extends State<Jogo> {
                     child: BotoesJogo(apagar: apagar, desfazer: desfazer, anotar: _anotar),
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: paddingPadrao, vertical: 10),
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                     child: Teclado(
                       valoresDisponiveis: const [1, 2, 3, 4, 5, 6, 7, 8, 9],
                       inserirNumero: (valor) => _inserirNumero(valor),

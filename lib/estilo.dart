@@ -13,6 +13,7 @@ class Estilo {
   //static const Color corPrimaria = Colors.orange;
   //static const Color corPrimaria = Color.fromARGB(255, 207, 118, 15);
   static const Color corPreto = Color.fromARGB(255, 50, 50, 50);
+  static const Color corBg = Color.fromARGB(255, 254, 253, 245);
 
   Estilo();
 }
