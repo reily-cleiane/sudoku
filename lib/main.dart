@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sudoku_app/logica/dificuldade.dart';
-import 'package:sudoku_app/telas/fim_jogo.dart';
-import 'package:sudoku_app/telas/novo_jogo.dart';
+import 'package:sudoku/logica/dificuldade.dart';
+import 'package:sudoku/telas/fim_jogo.dart';
+import 'package:sudoku/telas/novo_jogo.dart';
 
 void main() {
   //

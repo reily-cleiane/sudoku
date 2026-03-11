@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sudoku_app/estilo.dart';
-import 'package:sudoku_app/logica/dificuldade.dart';
-import 'package:sudoku_app/telas/novo_jogo.dart';
+import 'package:sudoku/estilo.dart';
+import 'package:sudoku/logica/dificuldade.dart';
+import 'package:sudoku/telas/novo_jogo.dart';
 
 class FimJogo extends StatelessWidget {
   final String tempoGasto;

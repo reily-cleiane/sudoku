@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:sudoku_app/estilo.dart';
-import 'package:sudoku_app/logica/dificuldade.dart';
-import 'package:sudoku_app/services/recordes.dart';
-import 'package:sudoku_app/telas/jogo.dart';
+import 'package:sudoku/estilo.dart';
+import 'package:sudoku/logica/dificuldade.dart';
+import 'package:sudoku/services/recordes.dart';
+import 'package:sudoku/telas/jogo.dart';
 
 class NovoJogo extends StatelessWidget {
   const NovoJogo({super.key});

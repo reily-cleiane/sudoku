@@ -1,4 +1,4 @@
-import 'package:sudoku_app/modelos/posicao.model.dart';
+import 'package:sudoku/modelos/posicao.model.dart';
 
 class JogadaInvalida {
   bool? repeteNaLinha;

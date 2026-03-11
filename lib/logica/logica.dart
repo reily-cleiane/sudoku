@@ -1,8 +1,8 @@
 import 'dart:math';
 import 'dart:developer' as d;
-import 'package:sudoku_app/logica/dificuldade.dart';
-import 'package:sudoku_app/modelos/celula.model.dart';
-import 'package:sudoku_app/modelos/jogada_invalida.model.dart';
+import 'package:sudoku/logica/dificuldade.dart';
+import 'package:sudoku/modelos/celula.model.dart';
+import 'package:sudoku/modelos/jogada_invalida.model.dart';
 
 /// Classe responsável pela geração e manipulação de tabuleiros Sudoku
 

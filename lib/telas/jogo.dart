@@ -1,17 +1,17 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:sudoku_app/componentes/botoes_jogo.dart';
-import 'package:sudoku_app/componentes/grid.dart';
-import 'package:sudoku_app/componentes/teclado.dart';
-import 'package:sudoku_app/estilo.dart';
-import 'package:sudoku_app/logica/dificuldade.dart';
-import 'package:sudoku_app/logica/logica.dart';
-import 'package:sudoku_app/modelos/celula.model.dart';
-import 'package:sudoku_app/modelos/historico_jogada.model.dart';
-import 'package:sudoku_app/modelos/posicao.model.dart';
-import 'package:sudoku_app/services/recordes.dart';
-import 'package:sudoku_app/telas/fim_jogo.dart';
-import 'package:sudoku_app/telas/novo_jogo.dart';
+import 'package:sudoku/componentes/botoes_jogo.dart';
+import 'package:sudoku/componentes/grid.dart';
+import 'package:sudoku/componentes/teclado.dart';
+import 'package:sudoku/estilo.dart';
+import 'package:sudoku/logica/dificuldade.dart';
+import 'package:sudoku/logica/logica.dart';
+import 'package:sudoku/modelos/celula.model.dart';
+import 'package:sudoku/modelos/historico_jogada.model.dart';
+import 'package:sudoku/modelos/posicao.model.dart';
+import 'package:sudoku/services/recordes.dart';
+import 'package:sudoku/telas/fim_jogo.dart';
+import 'package:sudoku/telas/novo_jogo.dart';
 
 class Jogo extends StatefulWidget {
   //Recebe key (que é padrão do framework, título, e dificuldade do jogo)
@@ -223,7 +223,7 @@ class JogoState extends State<Jogo> {
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Estilo.corBg,
-                            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 12),
                           ),
                           child: Text(
                             "Novo Jogo",
@@ -234,7 +234,6 @@ class JogoState extends State<Jogo> {
                             ),
                           ),
                         ),
-                        Padding(padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0)),
 
                         Text(
                           'Sudoku',

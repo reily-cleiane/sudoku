@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sudoku_app/estilo.dart';
-import 'package:sudoku_app/modelos/celula.model.dart';
+import 'package:sudoku/estilo.dart';
+import 'package:sudoku/modelos/celula.model.dart';
 
 /// Classe responsável por gerar o conteúdo formatado de uma célula do grid
 class CelulaGrid extends StatefulWidget {

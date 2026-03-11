@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sudoku_app/componentes/celula.dart';
-import 'package:sudoku_app/modelos/celula.model.dart';
-import 'package:sudoku_app/modelos/posicao.model.dart';
+import 'package:sudoku/componentes/celula.dart';
+import 'package:sudoku/modelos/celula.model.dart';
+import 'package:sudoku/modelos/posicao.model.dart';
 
 class GridSudoku extends StatefulWidget {
   const GridSudoku({
