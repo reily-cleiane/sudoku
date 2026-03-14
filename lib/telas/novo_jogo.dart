@@ -11,20 +11,14 @@ class NovoJogo extends StatelessWidget {
     return FutureBuilder<int?>(
       future: RecordesService.recuperarRecorde(nivel.runtimeType.toString()),
       builder: (context, snapshot) {
-        if (snapshot.hasData && snapshot.data != null) {
-          return Text(
-            "Melhor: ${RecordesService.formatarTempo(snapshot.data!)}",
-            style: TextStyle(
-              fontSize: (MediaQuery.of(context).size.width * 0.04).clamp(20.0, 35.0),
-              color: Colors.grey,
-              fontWeight: FontWeight.w500,
-            ),
-          );
-        }
+        String texto = snapshot.hasData && snapshot.data != null
+            ? "${nivel.nome}: ${RecordesService.formatarTempo(snapshot.data!)}"
+            : "${nivel.nome}: Sem recorde";
         return Text(
-          "Sem recorde",
+          texto,
           style: TextStyle(
-            fontSize: (MediaQuery.of(context).size.width * 0.04).clamp(20.0, 35.0),
+            fontSize: (MediaQuery.of(context).size.width * 0.04).clamp(20.0, 30.0),
+            color: Colors.grey,
             fontWeight: FontWeight.w500,
           ),
         );
@@ -35,14 +29,18 @@ class NovoJogo extends StatelessWidget {
   Widget _gerarBotaoDificuldade(BuildContext context, {required Dificuldade nivel}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0), // Espaçamento entre botões
-      child: GestureDetector(
-        onTap: () {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Jogo(dificuldade: nivel)));
-        },
-        child: SizedBox(
-          width: 240, // Largura fixa ou proporcional
-          height: 100,
-          child: nivel.imagem,
+      child: Semantics(
+        label: 'Iniciar jogo ${nivel.nome}',
+        button: true,
+        child: GestureDetector(
+          onTap: () {
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Jogo(dificuldade: nivel)));
+          },
+          child: SizedBox(
+            width: 240, // Largura fixa ou proporcional
+            height: 100,
+            child: nivel.imagem,
+          ),
         ),
       ),
     );
@@ -82,12 +80,15 @@ class NovoJogo extends StatelessWidget {
                       child: Column(
                         children: [
                           _gerarBotaoDificuldade(context, nivel: DificuldadeFacil()),
+                          _exibirRecorde(DificuldadeFacil()),
+                          Padding(padding: EdgeInsetsGeometry.only(bottom: 10)),
                           _gerarBotaoDificuldade(context, nivel: DificuldadeMedia()),
+                          _exibirRecorde(DificuldadeMedia()),
+                          Padding(padding: EdgeInsetsGeometry.only(bottom: 10)),
                           _gerarBotaoDificuldade(context, nivel: DificuldadeDificil()),
+                          _exibirRecorde(DificuldadeDificil()),
 
                           const SizedBox(height: 20),
-
-                          _exibirRecorde(DificuldadeFacil()),
                         ],
                       ),
                     ),
