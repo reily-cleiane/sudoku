@@ -21,21 +21,25 @@ class Teclado extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: List.generate(9, (index) {
         return Expanded(
-          child: GestureDetector(
-            onTap: () => clique(index + 1),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5.0), // Espaçamento entre botões
-              child: AspectRatio(
-                aspectRatio: 1, // Mantém o botão quadrado
-                child: Container(
-                  decoration: contagemNumeros[index] != 9
-                      ? BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage("imagens/teclado/btn${index + 1}.png"),
-                            fit: BoxFit.cover,
-                          ),
-                        )
-                      : null,
+          child: Semantics(
+            label: 'Inserir número ${index + 1}',
+            button: true,
+            child: GestureDetector(
+              onTap: () => clique(index + 1),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5.0), // Espaçamento entre botões
+                child: AspectRatio(
+                  aspectRatio: 1, // Mantém o botão quadrado
+                  child: Container(
+                    decoration: contagemNumeros[index] != 9
+                        ? BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage("imagens/teclado/btn${index + 1}.png"),
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : null,
+                  ),
                 ),
               ),
             ),

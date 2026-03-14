@@ -41,9 +41,13 @@ class FimJogo extends StatelessWidget {
                   ),
 
                 SizedBox(height: 20),
-                GestureDetector(
-                  onTap: () => _navegarTelaNovoJogo(context),
-                  child: SizedBox(width: 200, child: Image.asset("imagens/btn_novo_jogo.png", fit: BoxFit.contain)),
+                Semantics(
+                  label: 'Novo jogo',
+                  button: true,
+                  child: GestureDetector(
+                    onTap: () => _navegarTelaNovoJogo(context),
+                    child: SizedBox(width: 200, child: Image.asset("imagens/btn_novo_jogo.png", fit: BoxFit.contain)),
+                  ),
                 ),
               ],
             ),
