@@ -211,51 +211,56 @@ class JogoState extends State<Jogo> {
                   SizedBox(height: MediaQuery.of(context).size.width * 0.05),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: paddingPadrao, vertical: 0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child: Stack(
+                      alignment: Alignment.center,
                       children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (context) => const NovoJogo()),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Estilo.corBg,
-                            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 12),
-                          ),
+                        Padding(
+                          padding: EdgeInsetsGeometry.only(left: 60, right: 10),
                           child: Text(
-                            "Novo Jogo",
+                            'Sudoku',
+                            textAlign: TextAlign.center,
                             style: TextStyle(
+                              fontSize: (MediaQuery.of(context).size.width * 0.2).clamp(20, 70),
                               color: Estilo.corPrimaria,
-                              fontSize: (MediaQuery.of(context).size.width * 0.04).clamp(20.0, 35.0),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-
-                        Text(
-                          'Sudoku',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: (MediaQuery.of(context).size.width * 0.2).clamp(40, 70),
-                            color: Estilo.corPrimaria,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-
-                        Expanded(
-                          flex: 1,
-                          child: Text(
-                            textAlign: TextAlign.end,
-                            RecordesService.formatarTempo(_segundosDecorridos),
-                            style: TextStyle(
-                              fontSize: (MediaQuery.of(context).size.width * 0.045).clamp(22.0, 35.0),
                               fontWeight: FontWeight.w600,
-                              color: Estilo.corSecundaria,
                             ),
                           ),
+                        ),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const NovoJogo()),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Estilo.corBg,
+                                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 12),
+                              ),
+                              child: Text(
+                                "Novo Jogo",
+                                style: TextStyle(
+                                  color: Estilo.corPrimaria,
+                                  fontSize: (MediaQuery.of(context).size.width * 0.04).clamp(20.0, 35.0),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+
+                            Text(
+                              textAlign: TextAlign.end,
+                              RecordesService.formatarTempo(_segundosDecorridos),
+                              style: TextStyle(
+                                fontSize: (MediaQuery.of(context).size.width * 0.045).clamp(22.0, 35.0),
+                                fontWeight: FontWeight.w600,
+                                color: Estilo.corSecundaria,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
