@@ -1,5 +1,3 @@
-import 'dart:math';
-import 'dart:developer' as d;
 import 'package:sudoku/logica/dificuldade.dart';
 import 'package:sudoku/modelos/celula.model.dart';
 import 'package:sudoku/modelos/jogada_invalida.model.dart';
@@ -75,18 +73,9 @@ class LogicaSudoku {
     List<int> numeros = List.generate(9, (i) => i + 1);
     numeros.shuffle();
 
-    // for(int i = 0; i < numeros.length; i++){
-    //   var a = numeros[i];
-    //   d.log("numero $a");
-    // }
-
     int index = 0;
     for (int i = 0; i < tamanhoBloco; i++) {
       for (int j = 0; j < tamanhoBloco; j++) {
-        var t = linhaInicio + i;
-        var l = colunaInicio + j;
-        var a = numeros[index];
-        d.log('inserir em $t $l valor $a');
         tabuleiro[linhaInicio + i][colunaInicio + j].valor = numeros[index];
         index++;
       }
@@ -97,13 +86,6 @@ class LogicaSudoku {
   static void preencheBlocosDiagonal(List<List<Celula>> tabuleiro) {
     for (int idxInicial = 0; idxInicial < tamanho; idxInicial += tamanhoBloco) {
       preencheBloco(tabuleiro, idxInicial, idxInicial);
-
-      for (int i = 0; i < tabuleiro.length; i++) {
-        for (int j = 0; j < tabuleiro.length; j++) {
-          var valor = tabuleiro[i][j].valor;
-          d.log('tab $valor');
-        }
-      }
     }
   }
 
@@ -196,7 +178,10 @@ class LogicaSudoku {
       tabuleiro[i][j].valor = 0;
 
       // Cria cópia para teste
-      List<List<Celula>> tabuleiroTemp = tabuleiro.map((row) => [...row]).toList();
+      // List<List<Celula>> tabuleiroTemp = tabuleiro.map((row) => [...row]).toList();
+      List<List<Celula>> tabuleiroTemp = tabuleiro
+          .map((row) => row.map((cel) => Celula(valor: cel.valor, isFixo: cel.isFixo, rascunho: [])).toList())
+          .toList();
 
       if (temSolucaoUnica(tabuleiroTemp)) {
         tabuleiro[i][j].isFixo = false;
