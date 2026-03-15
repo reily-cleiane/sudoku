@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sudoku/componentes/botoes_jogo.dart';
+import 'package:sudoku/componentes/cronometro.dart';
 import 'package:sudoku/componentes/grid.dart';
 import 'package:sudoku/componentes/teclado.dart';
 import 'package:sudoku/estilo.dart';
@@ -27,12 +28,9 @@ class JogoState extends State<Jogo> {
   (int, int)? posicaoSelecionada;
   Posicao? posicaoErroDuplicidade;
   List<int> contagemNumeros = [];
-  Posicao? ultimaPosicaoJogada;
-  int? ultimoValorSubstituido;
   bool modoRascunho = false;
   List<HistoricoJogada> pilhaDesfazer = [];
   final double paddingPadrao = 20;
-  Timer? _timer;
   int _segundosDecorridos = 0;
 
   @override
@@ -40,21 +38,6 @@ class JogoState extends State<Jogo> {
     super.initState();
     tabuleiro = LogicaSudoku.gerarTabuleiro(widget.dificuldade);
     contagemNumeros = LogicaSudoku.contarNumeros(tabuleiro);
-    _iniciarCronometro();
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel(); // Importante para não vazar memória
-    super.dispose();
-  }
-
-  void _iniciarCronometro() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
-        _segundosDecorridos++;
-      });
-    });
   }
 
   bool _terminouJogo() {
@@ -67,8 +50,6 @@ class JogoState extends State<Jogo> {
   }
 
   void _finalizarJogo() async {
-    _timer?.cancel();
-
     bool novoRecorde = await RecordesService.verificarESalvarRecorde(
       widget.dificuldade.runtimeType.toString(),
       _segundosDecorridos,
@@ -100,7 +81,7 @@ class JogoState extends State<Jogo> {
   }
 
   void desfazer() {
-    if (ultimaPosicaoJogada != null && ultimoValorSubstituido != null && pilhaDesfazer.isNotEmpty) {
+    if (pilhaDesfazer.isNotEmpty) {
       setState(() {
         final ultimaJogada = pilhaDesfazer.removeLast();
         // Reverte o valor no tabuleiro
@@ -251,14 +232,10 @@ class JogoState extends State<Jogo> {
                               ),
                             ),
 
-                            Text(
-                              textAlign: TextAlign.end,
-                              RecordesService.formatarTempo(_segundosDecorridos),
-                              style: TextStyle(
-                                fontSize: (MediaQuery.of(context).size.width * 0.045).clamp(22.0, 35.0),
-                                fontWeight: FontWeight.w600,
-                                color: Estilo.corSecundaria,
-                              ),
+                            CronometroJogo(
+                              onTempoAtualizado: (segundos) {
+                                _segundosDecorridos = segundos;
+                              },
                             ),
                           ],
                         ),
