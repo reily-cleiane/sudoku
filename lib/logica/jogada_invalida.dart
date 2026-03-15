@@ -13,6 +13,7 @@ class JogadaInvalida {
     repeteNaLinha = jogadasInvalidas.any((jogada) => jogada?.repeteNaLinha == true);
     repeteNaColuna = jogadasInvalidas.any((jogada) => jogada?.repeteNaColuna == true);
     repeteNoBloco = jogadasInvalidas.any((jogada) => jogada?.repeteNoBloco == true);
+
     posicaoDuplicadaNaLinha = jogadasInvalidas
         .cast<JogadaInvalida?>()
         .firstWhere((jogada) => jogada?.posicaoDuplicadaNaLinha != null, orElse: () => null)
